@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Consulta de Ativos Veterinários — Biovetfarma</title>
+  <meta name="description" content="Pesquisa de ativos para prescrição veterinária com indicações e calculadora de dosagem." />
+  <style>
+    :root{
+      --bf-teal-escuro:#1A7175; --bf-teal:#3CB3C0; --bf-verde-claro:#CFF9B9;
+      --bf-verde:#9FD983; --bf-verde-medio:#84C165; --bf-creme:#FEFED3;
+      --bf-creme-escuro:#D6D37F; --bf-preto:#000000;
+      --bg: var(--bf-creme); --surface: #ffffff; --text: #0f172a;
+      --primary: var(--bf-teal-escuro); --primary-2: var(--bf-teal);
+      --ok: var(--bf-verde-medio); --muted: #64748b; --ring: rgba(28,140,144,0.25);
+      --shadow: 0 8px 30px rgba(2,7,22,0.08); --radius: 16px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,Arial,Helvetica,sans-serif;color:var(--text);
+      background:linear-gradient(180deg,var(--bg),#ffffff 60%)}
+    header{padding:28px 18px 10px;text-align:center;}
+    .brand{display:inline-flex;align-items:center;gap:12px;justify-content:center;
+      font-weight:700;color:var(--primary);}
+    .brand .logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--primary-2),var(--primary));display:inline-block;}
+    .container{max-width:920px;margin:0 auto;padding:18px;}
+    .search-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;border:1px solid rgba(0,0,0,0.04);}
+    .search-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .search-row input[type="search"]{flex:1 1 360px;padding:14px 16px;border-radius:12px;border:1px solid #e2e8f0;font-size:16px;outline:none;transition:box-shadow .2s,border-color .2s;background:#fff;}
+    .search-row input[type="search"]:focus{border-color:var(--primary-2);box-shadow:0 0 0 4px var(--ring);}
+    .btn{appearance:none;border:0;border-radius:12px;padding:14px 18px;font-weight:600;cursor:pointer;font-size:16px;background:var(--primary);color:white;box-shadow:0 6px 16px rgba(26,113,117,.18);transition:transform .04s ease,filter .2s ease;}
+    .btn:hover{filter:brightness(1.05)}.btn:active{transform:translateY(1px)}
+    .hint{color:var(--muted);font-size:14px;margin-top:10px}
+    .results{margin-top:18px}
+    .drug-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;border:1px solid rgba(0,0,0,0.04);}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:600;background:rgba(60,179,192,0.12);color:var(--primary);}
+    h1{font-size:22px;margin:10px 0 2px}h2{font-size:18px;margin:0 0 10px;color:var(--primary)}
+    h3{font-size:16px;margin:16px 0 8px;color:#0b3b3d}p{margin:6px 0 10px;line-height:1.5}
+    .grid{display:grid;gap:14px;grid-template-columns:1fr;}
+    @media(min-width:720px){.grid-2{grid-template-columns:1fr 1fr;gap:16px}}
+    .calc{background:linear-gradient(180deg,var(--bf-verde-claro),#fff 90%);
+      border-radius:12px;padding:14px;border:1px solid #dbece0;}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .row input[type="number"]{width:140px;padding:12px;border-radius:10px;border:1px solid #e2e8f0;font-size:16px;outline:none;}
+    .row input[type="number"]:focus{border-color:var(--primary-2);box-shadow:0 0 0 4px var(--ring)}
+    .dose{margin-top:8px;padding:10px 12px;background:#fff;border:1px dashed #cbd5e1;border-radius:10px;font-size:15px;}
+    .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .btn-ghost{background:#fff;color:var(--primary);border:1px solid var(--primary);box-shadow:none;}
+    .callout{margin-top:10px;background:linear-gradient(90deg,#fff,var(--bf-creme));
+      border:1px solid #efecc6;border-radius:12px;padding:10px 12px;font-size:14px;color:#4b5563;}
+    .empty{margin-top:16px;padding:22px;border:1px dashed #e2e8f0;border-radius:12px;background:#fff;color:#475569;text-align:center;}
+    footer{text-align:center;font-size:12px;color:#94a3b8;padding:24px 12px 36px}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;padding:2px 6px}
+  </style>
+</head>
+<body>
+  <header><div class="brand"><span class="logo"></span><span>Biovetfarma · Consulta de Ativos</span></div></header>
+  <main class="container">
+    <section class="search-card"><form id="searchForm" class="search-row" autocomplete="off">
+      <input id="q" type="search" placeholder="Pesquise um ativo (ex.: Cardo mariano, Silimarina)" />
+      <button class="btn" type="submit">Pesquisar</button></form>
+      <div class="hint">Dica: digite <span class="kbd">cardo mariano</span> ou <span class="kbd">silimarina</span>.</div>
+    </section>
+    <section id="results" class="results"></section>
+    <div class="empty" id="emptyState">Nenhum resultado ainda. Faça uma busca acima.</div>
+  </main>
+  <footer>© Biovetfarma — protótipo para prescrição veterinária.</footer>
+  <script>
+    const ATIVOS=[{nomes:["cardo mariano","silimarina"],titulo:"Cardo mariano (Silimarina)",
+      indicacoes:["Tratamento adjuvante de doenças hepáticas ou reações hepatotóxicas.","Indicado em situações de sobrecarga hepática."],
+      efeitos:["Não apresenta efeitos adversos."],dose:{minMgKg:20,maxMgKg:50}}];
+    const form=document.getElementById('searchForm'),input=document.getElementById('q'),results=document.getElementById('results'),empty=document.getElementById('emptyState');
+    form.addEventListener('submit',e=>{e.preventDefault();const q=input.value.trim().toLowerCase();if(!q){results.innerHTML="";empty.style.display="block";return;}
+      const match=ATIVOS.find(a=>a.nomes.some(n=>n.includes(q)||q.includes(n)));if(match){renderAtivo(match);empty.style.display="none";}else{results.innerHTML=`<div class="drug-card"><div class="pill">Ativo não encontrado</div><h1>Nenhum resultado para “${input.value}”.</h1><p>Experimente: <strong>Cardo mariano</strong> ou <strong>Silimarina</strong>.</p></div>`;empty.style.display="none";}});
+    function renderAtivo(a){results.innerHTML=`<article class="drug-card"><div class="pill">Hepatoprotetor</div><h1>${a.titulo}</h1>
+      <div class="grid grid-2"><section><h2>Indicações e contraindicações</h2><h3>Indicações</h3><ul>${a.indicacoes.map(i=>`<li>${i}</li>`).join('')}</ul>
+      <h3>Efeitos adversos</h3><ul>${a.efeitos.map(i=>`<li>${i}</li>`).join('')}</ul></section><section><h2>Dosagem para Cães e Gatos</h2>
+      <div class="calc"><div class="row" style="justify-content:space-between"><label><strong>Recomendado:</strong> ${a.dose.minMgKg}–${a.dose.maxMgKg} mg/kg</label>
+      <div class="actions"><input id="peso" type="number" min="0" step="0.1" placeholder="Peso (kg)"><button class="btn-ghost" id="btnPrescrever">Prescrever</button></div></div>
+      <div class="dose" id="doseBox">Informe o peso para calcular a dose.</div><div class="callout"><strong>Atenção:</strong> cálculo automático. Decisão final cabe ao prescritor.</div></div></section></div></article>`;
+      const pesoInput=document.getElementById('peso'),doseBox=document.getElementById('doseBox');pesoInput.addEventListener('input',()=>{const kg=parseFloat(pesoInput.value);
+      if(isNaN(kg)||kg<=0){doseBox.textContent="Informe o peso.";return;}const min=kg*a.dose.minMgKg,max=kg*a.dose.maxMgKg;doseBox.innerHTML=`Para <strong>${kg.toFixed(2)} kg</strong>:<br>• Dose mínima: <strong>${min.toFixed(1)} mg</strong><br>• Dose máxima: <strong>${max.toFixed(1)} mg</strong>`;});
+      document.getElementById('btnPrescrever').addEventListener('click',()=>alert('Função Prescrever em breve.'));}
+  </script>
+</body>
+</html>

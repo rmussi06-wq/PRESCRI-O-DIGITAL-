@@ -40,8 +40,13 @@
     .calc{background:linear-gradient(180deg,var(--bf-verde-claro),#fff 90%);
       border-radius:12px;padding:14px;border:1px solid #dbece0;}
     .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-    .row input[type="number"]{width:140px;padding:12px;border-radius:10px;border:1px solid #e2e8f0;font-size:16px;outline:none;}
+    .row input[type="number"], .row select{padding:12px;border-radius:10px;border:1px solid #e2e8f0;font-size:16px;outline:none;}
+    .row select{background:#fff;min-width:110px}
+    .row input[type="number"]{width:140px;}
     .row input[type="number"]:focus{border-color:var(--primary-2);box-shadow:0 0 0 4px var(--ring)}
+    .row select:focus{border-color:var(--primary-2);box-shadow:0 0 0 4px var(--ring)}
+    .row .dose-input{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+    .input-error{border-color:#f97316!important;box-shadow:0 0 0 4px rgba(249,115,22,0.3)!important;}
     .dose{margin-top:8px;padding:10px 12px;background:#fff;border:1px dashed #cbd5e1;border-radius:10px;font-size:15px;}
     .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
     .btn-ghost{background:#fff;color:var(--primary);border:1px solid var(--primary);box-shadow:none;}
@@ -50,10 +55,41 @@
     .empty{margin-top:16px;padding:22px;border:1px dashed #e2e8f0;border-radius:12px;background:#fff;color:#475569;text-align:center;}
     footer{text-align:center;font-size:12px;color:#94a3b8;padding:24px 12px 36px}
     .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;padding:2px 6px}
+    .cart-trigger{margin-top:12px;background:#fff;color:var(--primary);border:1px solid rgba(26,113,117,0.25);box-shadow:none;padding:10px 16px;font-size:15px;display:inline-flex;align-items:center;gap:8px;}
+    .badge{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;border-radius:999px;background:var(--primary);color:#fff;font-size:13px;font-weight:600;}
+    .modal{position:fixed;inset:0;background:rgba(15,23,42,0.38);display:none;align-items:center;justify-content:center;padding:20px;z-index:40;}
+    .modal.open{display:flex;}
+    .modal-card{background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(15,23,42,0.18);max-width:640px;width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;}
+    .modal-header{padding:22px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+    .modal-header h2{margin:0;font-size:20px;color:var(--primary);}
+    .modal-close{background:none;border:0;color:#475569;font-size:14px;font-weight:600;cursor:pointer;padding:6px 10px;border-radius:8px;}
+    .modal-close:hover{background:#f1f5f9;}
+    .modal-body{padding:20px 24px;overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
+    .modal-body label{font-size:14px;font-weight:600;color:#334155;margin-bottom:4px;display:block;}
+    .modal-body input[type="text"]{width:100%;padding:12px;border-radius:10px;border:1px solid #e2e8f0;font-size:15px;}
+    .modal-body input[type="text"]:focus{border-color:var(--primary-2);box-shadow:0 0 0 4px var(--ring);outline:none;}
+    .cart-items{display:flex;flex-direction:column;gap:12px;}
+    .cart-item{border:1px solid #e2e8f0;border-radius:14px;padding:14px 16px;background:#f8fafc;display:flex;flex-direction:column;gap:10px;}
+    .cart-item-title{font-weight:600;font-size:16px;color:#0f172a;}
+    .cart-item-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .cart-item-actions input[type="number"], .cart-item-actions select{padding:10px 12px;border-radius:10px;border:1px solid #cbd5f5;font-size:15px;outline:none;}
+    .cart-item-actions select{background:#fff;}
+    .cart-item-actions input[type="number"]:focus, .cart-item-actions select:focus{border-color:var(--primary-2);box-shadow:0 0 0 4px var(--ring);}
+    .cart-remove{background:none;border:0;color:#ef4444;font-weight:600;cursor:pointer;padding:6px 10px;border-radius:8px;}
+    .cart-remove:hover{background:rgba(239,68,68,0.12);}
+    .cart-empty{padding:20px;border:1px dashed #cbd5e1;border-radius:14px;text-align:center;color:#475569;background:#fff;}
+    .modal-footer{padding:18px 24px;border-top:1px solid #e2e8f0;display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;}
+    .btn-secondary{background:#fff;color:#0f172a;border:1px solid #cbd5f5;box-shadow:none;}
+    .btn-secondary:hover{filter:none;background:#f1f5f9;}
+    @media(max-width:600px){
+      .modal-card{max-width:100%;border-radius:16px;}
+      .modal-header, .modal-body, .modal-footer{padding-left:18px;padding-right:18px;}
+    }
   </style>
 </head>
 <body>
-  <header><div class="brand"><span class="logo"></span><span>Biovetfarma · Consulta de Ativos</span></div></header>
+  <header><div class="brand"><span class="logo"></span><span>Biovetfarma · Consulta de Ativos</span></div>
+    <button id="toggleCart" class="cart-trigger btn-ghost" type="button">Abrir prescrição <span id="cartCount" class="badge">0</span></button></header>
   <main class="container">
     <section class="search-card"><form id="searchForm" class="search-row" autocomplete="off">
       <input id="q" type="search" placeholder="Pesquise um ativo (ex.: Cardo mariano, Silimarina)" />
@@ -63,23 +99,144 @@
     <section id="results" class="results"></section>
     <div class="empty" id="emptyState">Nenhum resultado ainda. Faça uma busca acima.</div>
   </main>
+  <div id="cartModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="cartTitle">Prescrição</h2>
+        <button id="closeCart" class="modal-close" type="button">Fechar</button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <label for="tutorNome">Tutor</label>
+          <input id="tutorNome" type="text" placeholder="Nome do tutor" />
+        </div>
+        <div>
+          <label for="pacienteNome">Paciente</label>
+          <input id="pacienteNome" type="text" placeholder="Nome do paciente" />
+        </div>
+        <div id="cartItems" class="cart-items"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="clearCart" class="btn btn-secondary" type="button">Limpar todos</button>
+        <button id="finalizeCart" class="btn" type="button">Prescrever agora</button>
+      </div>
+    </div>
+  </div>
   <footer>© Biovetfarma — protótipo para prescrição veterinária.</footer>
   <script>
     const ATIVOS=[{nomes:["cardo mariano","silimarina"],titulo:"Cardo mariano (Silimarina)",
       indicacoes:["Tratamento adjuvante de doenças hepáticas ou reações hepatotóxicas.","Indicado em situações de sobrecarga hepática."],
       efeitos:["Não apresenta efeitos adversos."],dose:{minMgKg:20,maxMgKg:50}}];
+    const DOSE_UNIDADES=["MG","MCG","G","%","MG/ML"];
     const form=document.getElementById('searchForm'),input=document.getElementById('q'),results=document.getElementById('results'),empty=document.getElementById('emptyState');
+    const cartState={items:[]};
+    const cartModal=document.getElementById('cartModal');
+    const openCartBtn=document.getElementById('toggleCart');
+    const closeCartBtn=document.getElementById('closeCart');
+    const cartCount=document.getElementById('cartCount');
+    const cartItemsContainer=document.getElementById('cartItems');
+    const clearCartBtn=document.getElementById('clearCart');
+    const finalizeCartBtn=document.getElementById('finalizeCart');
+
     form.addEventListener('submit',e=>{e.preventDefault();const q=input.value.trim().toLowerCase();if(!q){results.innerHTML="";empty.style.display="block";return;}
       const match=ATIVOS.find(a=>a.nomes.some(n=>n.includes(q)||q.includes(n)));if(match){renderAtivo(match);empty.style.display="none";}else{results.innerHTML=`<div class="drug-card"><div class="pill">Ativo não encontrado</div><h1>Nenhum resultado para “${input.value}”.</h1><p>Experimente: <strong>Cardo mariano</strong> ou <strong>Silimarina</strong>.</p></div>`;empty.style.display="none";}});
+
+    const generateId=()=>`${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+    function openCart(){cartModal.classList.add('open');}
+    function closeCart(){cartModal.classList.remove('open');}
+
+    openCartBtn.addEventListener('click',openCart);
+    closeCartBtn.addEventListener('click',closeCart);
+    cartModal.addEventListener('click',e=>{if(e.target===cartModal){closeCart();}});
+
+    clearCartBtn.addEventListener('click',()=>{if(!cartState.items.length)return;cartState.items=[];renderCart();});
+    finalizeCartBtn.addEventListener('click',()=>{if(!cartState.items.length){openCart();return;}alert('Prescrição registrada. Proceder com emissão.');cartState.items=[];renderCart();closeCart();});
+
+    function renderCart(){
+      cartCount.textContent=cartState.items.length;
+      if(!cartState.items.length){
+        cartItemsContainer.innerHTML='<div class="cart-empty">Nenhum ativo selecionado. Utilize o botão “Prescrever” para adicionar itens.</div>';
+        clearCartBtn.disabled=true;
+        finalizeCartBtn.disabled=true;
+        return;
+      }
+      clearCartBtn.disabled=false;
+      finalizeCartBtn.disabled=false;
+      cartItemsContainer.innerHTML=cartState.items.map(item=>`
+        <div class="cart-item" data-id="${item.id}">
+          <div class="cart-item-title">${item.titulo}</div>
+          <div class="cart-item-actions">
+            <input type="number" min="0" step="0.1" value="${item.dose ?? ''}" data-field="dose" aria-label="Dosagem">
+            <select data-field="unit" aria-label="Unidade">
+              ${DOSE_UNIDADES.map(u=>`<option value="${u}" ${item.unidade===u?'selected':''}>${u}</option>`).join('')}
+            </select>
+            <button type="button" class="cart-remove" data-action="remove">Excluir</button>
+          </div>
+        </div>`).join('');
+
+      cartItemsContainer.querySelectorAll('[data-action="remove"]').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          const id=btn.closest('.cart-item').dataset.id;
+          cartState.items=cartState.items.filter(item=>item.id!==id);
+          renderCart();
+        });
+      });
+
+      cartItemsContainer.querySelectorAll('input[data-field="dose"]').forEach(inp=>{
+        inp.addEventListener('input',()=>{
+          const id=inp.closest('.cart-item').dataset.id;
+          const target=cartState.items.find(item=>item.id===id);
+          if(!target)return;
+          const value=parseFloat(inp.value);
+          target.dose=isNaN(value)?'':value;
+        });
+      });
+
+      cartItemsContainer.querySelectorAll('select[data-field="unit"]').forEach(sel=>{
+        sel.addEventListener('change',()=>{
+          const id=sel.closest('.cart-item').dataset.id;
+          const target=cartState.items.find(item=>item.id===id);
+          if(!target)return;
+          target.unidade=sel.value;
+        });
+      });
+    }
+
+    function addToCart(ativo,dose,unidade){
+      cartState.items.push({id:generateId(),titulo:ativo.titulo,dose,unidade});
+      renderCart();
+    }
+
     function renderAtivo(a){results.innerHTML=`<article class="drug-card"><div class="pill">Hepatoprotetor</div><h1>${a.titulo}</h1>
       <div class="grid grid-2"><section><h2>Indicações e contraindicações</h2><h3>Indicações</h3><ul>${a.indicacoes.map(i=>`<li>${i}</li>`).join('')}</ul>
       <h3>Efeitos adversos</h3><ul>${a.efeitos.map(i=>`<li>${i}</li>`).join('')}</ul></section><section><h2>Dosagem para Cães e Gatos</h2>
       <div class="calc"><div class="row" style="justify-content:space-between"><label><strong>Recomendado:</strong> ${a.dose.minMgKg}–${a.dose.maxMgKg} mg/kg</label>
-      <div class="actions"><input id="peso" type="number" min="0" step="0.1" placeholder="Peso (kg)"><button class="btn-ghost" id="btnPrescrever">Prescrever</button></div></div>
+      <div class="actions" style="gap:10px"><input id="peso" type="number" min="0" step="0.1" placeholder="Peso (kg)">
+        <div class="dose-input"><input id="dosePrescricao" type="number" min="0" step="0.1" placeholder="Dose">
+        <select id="doseUnidade">${DOSE_UNIDADES.map(u=>`<option value="${u}">${u}</option>`).join('')}</select></div>
+        <button class="btn" id="btnPrescrever" type="button">Prescrever</button></div></div>
       <div class="dose" id="doseBox">Informe o peso para calcular a dose.</div><div class="callout"><strong>Atenção:</strong> cálculo automático. Decisão final cabe ao prescritor.</div></div></section></div></article>`;
-      const pesoInput=document.getElementById('peso'),doseBox=document.getElementById('doseBox');pesoInput.addEventListener('input',()=>{const kg=parseFloat(pesoInput.value);
-      if(isNaN(kg)||kg<=0){doseBox.textContent="Informe o peso.";return;}const min=kg*a.dose.minMgKg,max=kg*a.dose.maxMgKg;doseBox.innerHTML=`Para <strong>${kg.toFixed(2)} kg</strong>:<br>• Dose mínima: <strong>${min.toFixed(1)} mg</strong><br>• Dose máxima: <strong>${max.toFixed(1)} mg</strong>`;});
-      document.getElementById('btnPrescrever').addEventListener('click',()=>alert('Função Prescrever em breve.'));}
+      const pesoInput=document.getElementById('peso'),doseBox=document.getElementById('doseBox');
+      const dosePrescricao=document.getElementById('dosePrescricao');
+      const doseUnidade=document.getElementById('doseUnidade');
+      const btnPrescrever=document.getElementById('btnPrescrever');
+
+      pesoInput.addEventListener('input',()=>{const kg=parseFloat(pesoInput.value);
+        if(isNaN(kg)||kg<=0){doseBox.textContent="Informe o peso.";return;}const min=kg*a.dose.minMgKg,max=kg*a.dose.maxMgKg;doseBox.innerHTML=`Para <strong>${kg.toFixed(2)} kg</strong>:<br>• Dose mínima: <strong>${min.toFixed(1)} mg</strong><br>• Dose máxima: <strong>${max.toFixed(1)} mg</strong>`;});
+
+      dosePrescricao.addEventListener('input',()=>dosePrescricao.classList.remove('input-error'));
+
+      btnPrescrever.addEventListener('click',()=>{
+        const doseValor=parseFloat(dosePrescricao.value);
+        if(isNaN(doseValor)||doseValor<=0){dosePrescricao.classList.add('input-error');dosePrescricao.focus();return;}
+        dosePrescricao.classList.remove('input-error');
+        addToCart(a,doseValor,doseUnidade.value);
+        openCart();
+      });
+    }
+
+    renderCart();
   </script>
 </body>
 </html>

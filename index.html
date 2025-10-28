@@ -332,13 +332,58 @@
           </div>
           <footer>Emitido automaticamente em ${dataFormatada}.</footer>
         </div>
-        <script>window.addEventListener('load',()=>{setTimeout(()=>{window.print();},200);});</script>
+        <script>
+          window.addEventListener('load',()=>{
+            setTimeout(()=>{window.print();},120);
+          });
+        </script>
       </body></html>`;
-      const popup=window.open('','_blank','noopener');
-      if(!popup){alert('Não foi possível abrir a prescrição. Verifique o bloqueador de pop-ups.');return;}
-      popup.document.write(documento);
-      popup.document.close();
-      popup.focus();
+
+      const iframe=document.createElement('iframe');
+      iframe.style.position='fixed';
+      iframe.style.right='0';
+      iframe.style.bottom='0';
+      iframe.style.width='0';
+      iframe.style.height='0';
+      iframe.style.border='0';
+      iframe.setAttribute('aria-hidden','true');
+
+      const cleanup=()=>{
+        iframe?.parentNode?.removeChild(iframe);
+      };
+
+      document.body.appendChild(iframe);
+
+      const doc=iframe.contentDocument||iframe.contentWindow?.document;
+      if(!doc){
+        cleanup();
+        alert('Não foi possível gerar a receita digital neste navegador.');
+        return;
+      }
+
+      doc.open();
+      doc.write(documento);
+      doc.close();
+
+      const triggerPrint=()=>{
+        try{
+          iframe.contentWindow?.focus();
+          const printResult=iframe.contentWindow?.print();
+          if(printResult===false){
+            throw new Error('print-cancelled');
+          }
+        }catch(err){
+          alert('Não foi possível abrir a impressão. Utilize o botão do navegador para salvar em PDF.');
+        }finally{
+          setTimeout(cleanup,500);
+        }
+      };
+
+      if('onafterprint' in iframe.contentWindow){
+        iframe.contentWindow.addEventListener('afterprint',cleanup,{once:true});
+      }
+
+      setTimeout(triggerPrint,200);
     }
   </script>
 </body>

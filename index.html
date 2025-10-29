@@ -3,83 +3,1958 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Consulta de Ativos Veterinários — Biovetfarma</title>
-  <meta name="description" content="Pesquisa de ativos para prescrição veterinária com indicações e calculadora de dosagem." />
+  <title>Biovetfarma — MVP Prescrição Digital Veterinária</title>
   <style>
-    :root{
-      --bf-teal-escuro:#1A7175; --bf-teal:#3CB3C0; --bf-verde-claro:#CFF9B9;
-      --bf-verde:#9FD983; --bf-verde-medio:#84C165; --bf-creme:#FEFED3;
-      --bf-creme-escuro:#D6D37F; --bf-preto:#000000;
-      --bg: var(--bf-creme); --surface: #ffffff; --text: #0f172a;
-      --primary: var(--bf-teal-escuro); --primary-2: var(--bf-teal);
-      --ok: var(--bf-verde-medio); --muted: #64748b; --ring: rgba(28,140,144,0.25);
-      --shadow: 0 8px 30px rgba(2,7,22,0.08); --radius: 16px;
+    :root {
+      color-scheme: dark;
+      --primary: #1A7175;
+      --primary-bright: #3BCBD0;
+      --accent-green: #9FD883;
+      --accent-light: #CFF9B9;
+      --accent-olive: #B4C165;
+      --accent-gold: #D6D37F;
+      --secondary: #0f1c1e;
+      --bg: #04090a;
+      --surface: #0b1417;
+      --surface-elevated: #101c1f;
+      --muted: rgba(237, 245, 246, 0.64);
+      --border: rgba(59, 203, 208, 0.28);
+      --shadow: 0 28px 60px rgba(0, 0, 0, 0.55);
+      --radius: 20px;
+      --text: #edf5f6;
+      --text-contrast: #050808;
+      --input-bg: rgba(12, 20, 22, 0.9);
+      --badge-bg: rgba(59, 203, 208, 0.18);
+      --badge-text: #3BCBD0;
+      --toast-success: rgba(159, 216, 131, 0.92);
+      --toast-error: rgba(198, 83, 83, 0.92);
+      --focus-ring: rgba(59, 203, 208, 0.55);
+      --focus-shadow: rgba(59, 203, 208, 0.2);
+      --surface-soft: rgba(19, 32, 35, 0.75);
     }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,Arial,Helvetica,sans-serif;color:var(--text);
-      background:linear-gradient(180deg,var(--bg),#ffffff 60%)}
-    header{padding:28px 18px 10px;text-align:center;}
-    .brand{display:inline-flex;align-items:center;gap:12px;justify-content:center;
-      font-weight:700;color:var(--primary);}
-    .brand .logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--primary-2),var(--primary));display:inline-block;}
-    .container{max-width:920px;margin:0 auto;padding:18px;}
-    .search-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;border:1px solid rgba(0,0,0,0.04);}
-    .search-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-    .search-row input[type="search"]{flex:1 1 360px;padding:14px 16px;border-radius:12px;border:1px solid #e2e8f0;font-size:16px;outline:none;transition:box-shadow .2s,border-color .2s;background:#fff;}
-    .search-row input[type="search"]:focus{border-color:var(--primary-2);box-shadow:0 0 0 4px var(--ring);}
-    .btn{appearance:none;border:0;border-radius:12px;padding:14px 18px;font-weight:600;cursor:pointer;font-size:16px;background:var(--primary);color:white;box-shadow:0 6px 16px rgba(26,113,117,.18);transition:transform .04s ease,filter .2s ease;}
-    .btn:hover{filter:brightness(1.05)}.btn:active{transform:translateY(1px)}
-    .hint{color:var(--muted);font-size:14px;margin-top:10px}
-    .results{margin-top:18px}
-    .drug-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;border:1px solid rgba(0,0,0,0.04);}
-    .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:600;background:rgba(60,179,192,0.12);color:var(--primary);}
-    h1{font-size:22px;margin:10px 0 2px}h2{font-size:18px;margin:0 0 10px;color:var(--primary)}
-    h3{font-size:16px;margin:16px 0 8px;color:#0b3b3d}p{margin:6px 0 10px;line-height:1.5}
-    .grid{display:grid;gap:14px;grid-template-columns:1fr;}
-    @media(min-width:720px){.grid-2{grid-template-columns:1fr 1fr;gap:16px}}
-    .calc{background:linear-gradient(180deg,var(--bf-verde-claro),#fff 90%);
-      border-radius:12px;padding:14px;border:1px solid #dbece0;}
-    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-    .row input[type="number"]{width:140px;padding:12px;border-radius:10px;border:1px solid #e2e8f0;font-size:16px;outline:none;}
-    .row input[type="number"]:focus{border-color:var(--primary-2);box-shadow:0 0 0 4px var(--ring)}
-    .dose{margin-top:8px;padding:10px 12px;background:#fff;border:1px dashed #cbd5e1;border-radius:10px;font-size:15px;}
-    .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-    .btn-ghost{background:#fff;color:var(--primary);border:1px solid var(--primary);box-shadow:none;}
-    .callout{margin-top:10px;background:linear-gradient(90deg,#fff,var(--bf-creme));
-      border:1px solid #efecc6;border-radius:12px;padding:10px 12px;font-size:14px;color:#4b5563;}
-    .empty{margin-top:16px;padding:22px;border:1px dashed #e2e8f0;border-radius:12px;background:#fff;color:#475569;text-align:center;}
-    footer{text-align:center;font-size:12px;color:#94a3b8;padding:24px 12px 36px}
-    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;padding:2px 6px}
+
+    body.theme-light {
+      color-scheme: light;
+      --bg: #f5faf9;
+      --surface: #ffffff;
+      --surface-elevated: #ffffff;
+      --text: #263238;
+      --muted: #60707b;
+      --border: rgba(38, 50, 56, 0.1);
+      --shadow: 0 18px 48px rgba(38, 50, 56, 0.12);
+      --input-bg: #ffffff;
+      --badge-bg: rgba(59, 203, 208, 0.12);
+      --badge-text: #1A7175;
+      --toast-success: rgba(159, 216, 131, 0.75);
+      --toast-error: rgba(198, 83, 83, 0.75);
+      --focus-ring: rgba(26, 113, 117, 0.6);
+      --focus-shadow: rgba(59, 203, 208, 0.25);
+      --surface-soft: rgba(255, 255, 255, 0.9);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(59, 203, 208, 0.28), transparent 58%),
+        radial-gradient(circle at 88% 12%, rgba(159, 216, 131, 0.22), transparent 55%),
+        radial-gradient(circle at 50% 100%, rgba(214, 211, 127, 0.24), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px 72px;
+    }
+
+    h1, h2, h3, h4 { margin: 0; font-weight: 700; }
+    p { margin: 0; }
+    ul { margin: 0; padding-left: 18px; }
+    button { font: inherit; }
+
+    .hidden { display: none !important; }
+
+    .app-shell {
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .card {
+      background: linear-gradient(170deg, rgba(11, 28, 31, 0.92), rgba(11, 28, 31, 0.78));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      border: 1px solid rgba(59, 203, 208, 0.22);
+      backdrop-filter: blur(18px);
+    }
+
+    .auth-card {
+      max-width: 460px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      text-align: left;
+      background: linear-gradient(160deg, rgba(11, 24, 27, 0.92), rgba(11, 24, 27, 0.82));
+      border: 1px solid rgba(59, 203, 208, 0.35);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-light);
+      text-align: left;
+    }
+
+    .brand-logo {
+      width: 64px;
+      height: 64px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 10px 24px rgba(59, 203, 208, 0.35));
+    }
+
+    .brand-logo--small {
+      width: 48px;
+      height: 48px;
+    }
+
+    .tabs-toggle {
+      display: flex;
+      background: rgba(59, 203, 208, 0.08);
+      border-radius: 999px;
+      padding: 5px;
+      gap: 6px;
+    }
+
+    .tabs-toggle button {
+      flex: 1;
+      border: none;
+      border-radius: 999px;
+      padding: 11px 16px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+    }
+
+    .tabs-toggle button.active {
+      background: linear-gradient(135deg, rgba(59, 203, 208, 0.28), rgba(26, 113, 117, 0.9));
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(237, 245, 246, 0.85);
+    }
+
+    body.theme-light label { color: #193137; }
+
+    input, select, textarea {
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: inherit;
+      font-size: 15px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      backdrop-filter: blur(14px);
+    }
+
+    textarea { resize: vertical; min-height: 120px; }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--focus-ring);
+      box-shadow: 0 0 0 4px var(--focus-shadow);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 14px;
+      padding: 13px 20px;
+      font-weight: 600;
+      background: linear-gradient(135deg, rgba(26, 113, 117, 0.9), rgba(59, 203, 208, 0.9));
+      color: #041315;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.12s ease, filter 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 14px 32px rgba(26, 113, 117, 0.32);
+    }
+
+    .btn:hover { filter: brightness(1.05); box-shadow: 0 16px 36px rgba(59, 203, 208, 0.42); }
+    .btn:active { transform: translateY(1px); }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(59, 203, 208, 0.45);
+      color: var(--primary-bright);
+      box-shadow: none;
+    }
+
+    .btn-ghost {
+      background: rgba(59, 203, 208, 0.12);
+      color: var(--primary-bright);
+      box-shadow: none;
+    }
+
+    .app-header {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .header-top {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .header-row {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    @media (min-width: 720px) {
+      .header-top { flex-direction: row; justify-content: space-between; align-items: center; }
+      .header-row { flex-direction: row; align-items: center; }
+      .header-row > * { flex: 1; }
+      .header-actions { justify-content: flex-end; }
+    }
+
+    .header-info {
+      background: linear-gradient(165deg, rgba(12, 28, 31, 0.92), rgba(8, 18, 20, 0.88));
+      border-radius: var(--radius);
+      border: 1px solid rgba(59, 203, 208, 0.28);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .header-search {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .tablist {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    @media (min-width: 720px) {
+      .tablist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+
+    .tab-btn {
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(59, 203, 208, 0.18);
+      background: linear-gradient(160deg, rgba(10, 24, 27, 0.92), rgba(8, 18, 20, 0.88));
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.38);
+      color: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s ease, transform 0.12s ease, box-shadow 0.2s ease;
+    }
+
+    .tab-btn[aria-selected="true"] {
+      border-color: var(--primary-bright);
+      box-shadow: 0 18px 36px rgba(59, 203, 208, 0.28);
+      transform: translateY(-1px);
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .library-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    @media (min-width: 620px) {
+      .library-controls { flex-direction: row; }
+      .library-controls > * { flex: 1; }
+      .library-controls select { max-width: 220px; }
+    }
+
+    .library-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 900px) {
+      .library-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .library-card {
+      background: linear-gradient(165deg, rgba(12, 28, 31, 0.94), rgba(8, 18, 20, 0.86));
+      border: 1px solid rgba(59, 203, 208, 0.22);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pill-list span {
+      background: rgba(59, 203, 208, 0.14);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--badge-text);
+    }
+    body.theme-light .pill-list span { background: rgba(26, 113, 117, 0.12); color: #1A7175; }
+
+    .prescription-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    @media (min-width: 880px) {
+      .prescription-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .prescription-card {
+      background: linear-gradient(165deg, rgba(12, 28, 31, 0.92), rgba(9, 20, 22, 0.9));
+      border: 1px solid rgba(59, 203, 208, 0.24);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .promo-card {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      background: linear-gradient(165deg, rgba(26, 113, 117, 0.18), rgba(10, 26, 28, 0.92));
+      border: 1px solid rgba(59, 203, 208, 0.36);
+      padding: 26px;
+    }
+
+    .promo-gallery {
+      display: grid;
+      gap: 14px;
+    }
+
+    @media (min-width: 880px) {
+      .promo-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .promo-tile {
+      position: relative;
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(150deg, rgba(11, 24, 27, 0.82), rgba(11, 24, 27, 0.65));
+      border: 1px solid rgba(59, 203, 208, 0.28);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .promo-tile svg {
+      width: 72px;
+      height: 72px;
+      align-self: flex-start;
+    }
+
+    .promo-tile .badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(214, 211, 127, 0.28);
+      color: #D6D37F;
+    }
+
+    .promo-tile button {
+      align-self: flex-start;
+      border-radius: 999px;
+      padding: 8px 16px;
+    }
+
+    .dose-box {
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: rgba(59, 203, 208, 0.12);
+      border: 1px dashed rgba(59, 203, 208, 0.45);
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--accent-light);
+    }
+
+    .range-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .range-wrapper input[type="range"] {
+      width: 100%;
+    }
+
+    .range-wrapper.no-range input[type="range"] {
+      display: none;
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .history-table th, .history-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .history-table tbody tr:hover {
+      background: rgba(59, 203, 208, 0.14);
+    }
+
+    .empty-state {
+      padding: 22px;
+      border-radius: var(--radius);
+      border: 1px dashed rgba(59, 203, 208, 0.32);
+      text-align: center;
+      color: var(--muted);
+      background: linear-gradient(160deg, rgba(12, 28, 31, 0.9), rgba(8, 18, 20, 0.82));
+    }
+
+    .empty-state.accent {
+      border-style: solid;
+      border-color: rgba(59, 203, 208, 0.45);
+      color: var(--accent-light);
+      background: linear-gradient(160deg, rgba(26, 113, 117, 0.18), rgba(8, 18, 20, 0.85));
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 16px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toast {
+      padding: 14px 18px;
+      border-radius: 12px;
+      background: rgba(9, 20, 22, 0.95);
+      border: 1px solid rgba(59, 203, 208, 0.28);
+      box-shadow: var(--shadow);
+      font-size: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      color: var(--text);
+    }
+
+    .toast.error { border-color: rgba(198, 83, 83, 0.65); color: var(--toast-error); }
+    .toast.success { border-color: rgba(159, 216, 131, 0.6); color: var(--toast-success); }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 30, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 90;
+    }
+
+    .modal.open { display: flex; }
+
+    .modal-card {
+      max-width: 680px;
+      width: 100%;
+      max-height: 90vh;
+      overflow: hidden;
+      border-radius: 20px;
+      background: var(--surface);
+      box-shadow: 0 30px 80px rgba(15, 23, 30, 0.35);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header, .modal-footer {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .modal-footer { border-top: 1px solid var(--border); border-bottom: none; justify-content: flex-end; flex-wrap: wrap; }
+
+    .modal-body {
+      padding: 22px 24px;
+      overflow-y: auto;
+    }
+
+    .preview-receita {
+      background: linear-gradient(165deg, rgba(12, 28, 31, 0.92), rgba(9, 20, 22, 0.86));
+      border-radius: var(--radius);
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+      border: 1px solid rgba(59, 203, 208, 0.26);
+    }
+
+    .preview-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .preview-table th, .preview-table td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px 8px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      user-select: none;
+    }
+
+    .switch input { display: none; }
+
+    .switch-slider {
+      width: 44px;
+      height: 24px;
+      background: rgba(59, 203, 208, 0.18);
+      border-radius: 999px;
+      position: relative;
+      transition: background 0.2s ease;
+      border: 1px solid rgba(59, 203, 208, 0.32);
+    }
+
+    .switch-slider::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+      transition: transform 0.2s ease;
+    }
+
+    .switch input:checked + .switch-slider {
+      background: linear-gradient(135deg, rgba(26, 113, 117, 0.92), rgba(59, 203, 208, 0.82));
+    }
+
+    .switch input:checked + .switch-slider::after {
+      transform: translateX(18px);
+    }
+
+    .config-card {
+      background: linear-gradient(165deg, rgba(12, 28, 31, 0.9), rgba(8, 18, 20, 0.88));
+      border-radius: var(--radius);
+      border: 1px solid rgba(59, 203, 208, 0.24);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 16px;
+    }
+
+    .muted { color: var(--muted); font-size: 14px; }
+
+    .actions-row { display: flex; gap: 10px; flex-wrap: wrap; }
   </style>
 </head>
 <body>
-  <header><div class="brand"><span class="logo"></span><span>Biovetfarma · Consulta de Ativos</span></div></header>
-  <main class="container">
-    <section class="search-card"><form id="searchForm" class="search-row" autocomplete="off">
-      <input id="q" type="search" placeholder="Pesquise um ativo (ex.: Cardo mariano, Silimarina)" />
-      <button class="btn" type="submit">Pesquisar</button></form>
-      <div class="hint">Dica: digite <span class="kbd">cardo mariano</span> ou <span class="kbd">silimarina</span>.</div>
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+  <div class="app-shell">
+    <section id="authView" class="card auth-card" aria-label="Autenticação">
+      <div class="brand">
+        <svg class="brand-logo" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+          <rect x="50" y="10" width="20" height="100" rx="10" fill="#1A7175" />
+          <rect x="10" y="50" width="100" height="20" rx="10" fill="#3BCBD0" />
+          <circle cx="74" cy="48" r="18" fill="#CFF9B9" />
+          <path d="M64 34 L74 18 L84 34 Z" fill="#CFF9B9" />
+          <circle cx="74" cy="48" r="3.6" fill="#263238" />
+          <circle cx="66" cy="48" r="3.6" fill="#263238" />
+          <path d="M67 56 C70 59 73 59 77 56" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+          <circle cx="46" cy="74" r="20" fill="#9FD883" />
+          <path d="M32 78 C32 87 39 94 48 94 C57 94 64 87 64 78 C64 69 57 62 48 62 C39 62 32 69 32 78 Z" fill="#B4C165" opacity="0.55" />
+          <circle cx="40" cy="74" r="4" fill="#263238" />
+          <circle cx="54" cy="74" r="4" fill="#263238" />
+          <path d="M43 84 C47 88 51 88 55 84" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+        </svg>
+        <div>
+          <h1>Biovetfarma — MVP Prescrição</h1>
+          <p class="muted">Acesse com seu CRMV para gerenciar prescrições digitais.</p>
+        </div>
+      </div>
+      <div class="tabs-toggle" role="tablist" aria-label="Selecione o tipo de acesso">
+        <button id="authLoginTab" class="active" role="tab" aria-selected="true" aria-controls="loginPanel">Entrar</button>
+        <button id="authRegisterTab" role="tab" aria-selected="false" aria-controls="registerPanel">Criar conta</button>
+      </div>
+      <form id="loginForm" aria-labelledby="authLoginTab" role="tabpanel" tabindex="0">
+        <div>
+          <label for="loginEmail">E-mail</label>
+          <input id="loginEmail" name="email" type="email" autocomplete="username" required />
+        </div>
+        <div>
+          <label for="loginSenha">Senha</label>
+          <input id="loginSenha" name="senha" type="password" autocomplete="current-password" minlength="6" required />
+        </div>
+        <button class="btn" type="submit">Entrar</button>
+      </form>
+      <form id="registerForm" class="hidden" aria-labelledby="authRegisterTab" role="tabpanel" tabindex="0">
+        <div>
+          <label for="registerNome">Nome completo</label>
+          <input id="registerNome" name="nome" type="text" autocomplete="name" required />
+        </div>
+        <div>
+          <label for="registerEmail">E-mail</label>
+          <input id="registerEmail" name="email" type="email" autocomplete="email" required />
+        </div>
+        <div>
+          <label for="registerCrmv">CRMV</label>
+          <input id="registerCrmv" name="crmv" type="text" autocomplete="off" required />
+        </div>
+        <div>
+          <label for="registerSenha">Senha (mínimo 6 caracteres)</label>
+          <input id="registerSenha" name="senha" type="password" autocomplete="new-password" minlength="6" required />
+        </div>
+        <button class="btn" type="submit">Criar conta</button>
+      </form>
     </section>
-    <section id="results" class="results"></section>
-    <div class="empty" id="emptyState">Nenhum resultado ainda. Faça uma busca acima.</div>
-  </main>
-  <footer>© Biovetfarma — protótipo para prescrição veterinária.</footer>
+
+    <div id="appView" class="hidden" aria-live="polite">
+      <header class="app-header">
+        <div class="header-top">
+          <div class="header-info" aria-live="polite">
+            <svg class="brand-logo brand-logo--small" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+              <rect x="50" y="10" width="20" height="100" rx="10" fill="#1A7175" />
+              <rect x="10" y="50" width="100" height="20" rx="10" fill="#3BCBD0" />
+              <circle cx="74" cy="48" r="18" fill="#CFF9B9" />
+              <path d="M64 34 L74 18 L84 34 Z" fill="#CFF9B9" />
+              <circle cx="74" cy="48" r="3.6" fill="#263238" />
+              <circle cx="66" cy="48" r="3.6" fill="#263238" />
+              <path d="M67 56 C70 59 73 59 77 56" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+              <circle cx="46" cy="74" r="20" fill="#9FD883" />
+              <path d="M32 78 C32 87 39 94 48 94 C57 94 64 87 64 78 C64 69 57 62 48 62 C39 62 32 69 32 78 Z" fill="#B4C165" opacity="0.55" />
+              <circle cx="40" cy="74" r="4" fill="#263238" />
+              <circle cx="54" cy="74" r="4" fill="#263238" />
+              <path d="M43 84 C47 88 51 88 55 84" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+            </svg>
+            <div>
+              <h2>Biovetfarma — MVP Prescrição</h2>
+              <p id="headerUser" class="muted"></p>
+            </div>
+          </div>
+          <div class="header-actions">
+            <div class="header-search">
+              <input id="globalSearch" type="search" placeholder="Busca global por ativos ou indicações" aria-label="Busca global" />
+              <button id="globalSearchBtn" class="btn-outline btn" type="button">Buscar</button>
+            </div>
+            <button id="newPrescriptionBtn" class="btn" type="button">Novo</button>
+            <button id="logoutBtn" class="btn-outline btn" type="button">Sair</button>
+            <label class="switch" for="themeToggle">
+              <input id="themeToggle" type="checkbox" />
+              <span class="switch-slider" aria-hidden="true"></span>
+              <span>Modo escuro</span>
+            </label>
+          </div>
+        </div>
+        <nav class="tablist" role="tablist" aria-label="Sessões do dashboard">
+          <button class="tab-btn" role="tab" aria-selected="true" aria-controls="tab-prescrever" id="tabBtnPrescrever">Prescrever</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-biblioteca" id="tabBtnBiblioteca">Biblioteca de Ativos</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-historico" id="tabBtnHistorico">Pacientes & Histórico</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-config" id="tabBtnConfig">Configurações</button>
+        </nav>
+      </header>
+
+      <main>
+        <section id="tab-prescrever" class="tab-panel active" role="tabpanel" aria-labelledby="tabBtnPrescrever">
+          <div class="prescription-grid">
+            <article class="prescription-card">
+              <h3>Dados do paciente</h3>
+              <form id="prescriptionForm">
+                <div>
+                  <label for="tutorNome">Tutor</label>
+                  <input id="tutorNome" name="tutor" type="text" placeholder="Nome do responsável (opcional)" />
+                </div>
+                <div>
+                  <label for="pacienteNome">Paciente</label>
+                  <input id="pacienteNome" name="paciente" type="text" placeholder="Paciente (caso diferente do nome do animal)" />
+                </div>
+                <div>
+                  <label for="animalNome">Animal</label>
+                  <input id="animalNome" name="animal" type="text" required />
+                </div>
+                <div>
+                  <label for="especie">Espécie</label>
+                  <select id="especie" name="especie" required>
+                    <option value="">Selecione</option>
+                    <option value="Cão">Cão</option>
+                    <option value="Gato">Gato</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="peso">Peso (kg)</label>
+                  <input id="peso" name="peso" type="number" min="0" step="0.1" required />
+                </div>
+                <div>
+                  <label for="idade">Idade (opcional)</label>
+                  <input id="idade" name="idade" type="text" placeholder="Ex.: 5 anos" />
+                </div>
+                <div>
+                  <label for="diagnostico">Diagnóstico</label>
+                  <input id="diagnostico" name="diagnostico" type="text" placeholder="Ex.: Insuficiência hepática" />
+                </div>
+                <div>
+                  <label for="ativoNome">Ativo</label>
+                  <input id="ativoNome" name="ativo" type="text" list="ativosDatalist" autocomplete="off" required />
+                  <datalist id="ativosDatalist"></datalist>
+                </div>
+                <div>
+                  <label for="forma">Concentração / Forma farmacêutica</label>
+                  <input id="forma" name="forma" type="text" placeholder="Ex.: Cápsula 50 mg" />
+                </div>
+                <div>
+                  <label for="doseMgKg">Posologia (mg/kg)</label>
+                  <div class="range-wrapper no-range" id="doseRangeWrapper">
+                    <input id="doseRange" type="range" min="1" max="10" step="0.1" aria-label="Selecionar mg por kg" />
+                    <div class="actions-row">
+                      <input id="doseMgKg" type="number" step="0.1" min="0" required />
+                      <span class="muted" id="doseHint">Selecione um ativo para sugestões de dose.</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="dose-box" id="doseResumo">Informe peso e mg/kg para calcular a dose.</div>
+                <div>
+                  <label for="frequencia">Frequência</label>
+                  <select id="frequencia" required>
+                    <option value="">Selecione</option>
+                    <option value="1x/dia">1x/dia</option>
+                    <option value="2x/dia">2x/dia</option>
+                    <option value="3x/dia">3x/dia</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="duracao">Duração (dias)</label>
+                  <input id="duracao" type="number" min="1" step="1" required />
+                </div>
+                <div>
+                  <label for="observacoes">Observações adicionais</label>
+                  <textarea id="observacoes" placeholder="Instruções extras para o tutor"></textarea>
+                </div>
+                <button class="btn" type="submit">Gerar Receita Digital</button>
+              </form>
+            </article>
+            <article class="prescription-card">
+              <h3>Referências rápidas</h3>
+              <div id="ativoResumo" class="muted">Selecione um ativo na biblioteca ou utilize o campo acima.</div>
+              <div id="referenciasAtivo"></div>
+            </article>
+            <article class="prescription-card promo-card" aria-label="Campanhas Biovetfarma">
+              <div>
+                <h3>Campanhas Biovetfarma</h3>
+                <p class="muted">Manipulação veterinária premium, logística ágil e suporte clínico para o prescritor.</p>
+              </div>
+              <div class="promo-gallery">
+                <div class="promo-tile">
+                  <span class="badge">Manipulação</span>
+                  <svg viewBox="0 0 120 120" role="img" aria-label="Mascote Biovetfarma">
+                    <rect x="50" y="10" width="20" height="100" rx="10" fill="#1A7175" />
+                    <rect x="10" y="50" width="100" height="20" rx="10" fill="#3BCBD0" />
+                    <circle cx="74" cy="48" r="18" fill="#CFF9B9" />
+                    <path d="M64 34 L74 18 L84 34 Z" fill="#CFF9B9" />
+                    <circle cx="74" cy="48" r="3.6" fill="#263238" />
+                    <circle cx="66" cy="48" r="3.6" fill="#263238" />
+                    <path d="M67 56 C70 59 73 59 77 56" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+                    <circle cx="46" cy="74" r="20" fill="#9FD883" />
+                    <path d="M32 78 C32 87 39 94 48 94 C57 94 64 87 64 78 C64 69 57 62 48 62 C39 62 32 69 32 78 Z" fill="#B4C165" opacity="0.55" />
+                    <circle cx="40" cy="74" r="4" fill="#263238" />
+                    <circle cx="54" cy="74" r="4" fill="#263238" />
+                    <path d="M43 84 C47 88 51 88 55 84" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+                  </svg>
+                  <strong>Manipulação sob medida</strong>
+                  <p class="muted">Fórmulas personalizadas com rastreio digital e entrega nacional.</p>
+                  <button class="btn-outline btn" type="button">Falar com a equipe</button>
+                </div>
+                <div class="promo-tile">
+                  <span class="badge">Parcerias</span>
+                  <svg viewBox="0 0 120 120" role="img" aria-label="Logística Biovetfarma">
+                    <rect x="16" y="48" width="88" height="52" rx="18" fill="#1A7175" />
+                    <circle cx="38" cy="88" r="14" fill="#3BCBD0" />
+                    <circle cx="38" cy="88" r="6" fill="#0b1417" />
+                    <circle cx="82" cy="88" r="14" fill="#9FD883" />
+                    <circle cx="82" cy="88" r="6" fill="#0b1417" />
+                    <rect x="28" y="32" width="64" height="32" rx="12" fill="#CFF9B9" />
+                    <rect x="48" y="18" width="24" height="26" rx="12" fill="#B4C165" />
+                    <path d="M46 54 H74" stroke="#1A7175" stroke-width="4" stroke-linecap="round" />
+                  </svg>
+                  <strong>Farmácias conveniadas</strong>
+                  <p class="muted">Rede parceira com condições especiais para tutores e clínicas.</p>
+                  <button class="btn-outline btn" type="button">Ver parceiros</button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="tab-biblioteca" class="tab-panel" role="tabpanel" aria-labelledby="tabBtnBiblioteca">
+          <div class="library-controls">
+            <input id="librarySearch" type="search" placeholder="Busque por nome, classe terapêutica, indicação ou mecanismo" aria-label="Buscar ativo" />
+            <select id="libraryFilter" aria-label="Filtrar por classe terapêutica">
+              <option value="">Todas as classes</option>
+            </select>
+          </div>
+          <div id="libraryList" class="library-list" aria-live="polite"></div>
+        </section>
+
+        <section id="tab-historico" class="tab-panel" role="tabpanel" aria-labelledby="tabBtnHistorico">
+          <div id="historicoContainer"></div>
+        </section>
+
+        <section id="tab-config" class="tab-panel" role="tabpanel" aria-labelledby="tabBtnConfig">
+          <div class="config-card">
+            <div>
+              <h3>Integrações futuras</h3>
+              <p class="muted">Reserve este espaço para conectar com APIs, ERPs e farmacêuticas parceiras.</p>
+            </div>
+            <div>
+              <h4>Notificações</h4>
+              <p class="muted">Configurações de alerta serão adicionadas em uma próxima etapa.</p>
+            </div>
+            <div>
+              <h4>Exportação</h4>
+              <p class="muted">Suporte a PDF assinado digitalmente (ICP-Brasil) e integração com dispensação automática.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div id="previewModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="previewTitle" tabindex="-1">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 id="previewTitle">Pré-visualização da receita</h3>
+          <p class="muted">Revise as informações antes de compartilhar com o tutor.</p>
+        </div>
+        <button id="closePreview" class="btn-outline btn" type="button">Fechar</button>
+      </div>
+      <div class="modal-body">
+        <div id="previewContent" class="preview-receita"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="copyLinkBtn" class="btn-outline btn" type="button">Copiar Link Local</button>
+        <button id="downloadBtn" class="btn" type="button">Baixar Arquivo (.html)</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const ATIVOS=[{nomes:["cardo mariano","silimarina"],titulo:"Cardo mariano (Silimarina)",
-      indicacoes:["Tratamento adjuvante de doenças hepáticas ou reações hepatotóxicas.","Indicado em situações de sobrecarga hepática."],
-      efeitos:["Não apresenta efeitos adversos."],dose:{minMgKg:20,maxMgKg:50}}];
-    const form=document.getElementById('searchForm'),input=document.getElementById('q'),results=document.getElementById('results'),empty=document.getElementById('emptyState');
-    form.addEventListener('submit',e=>{e.preventDefault();const q=input.value.trim().toLowerCase();if(!q){results.innerHTML="";empty.style.display="block";return;}
-      const match=ATIVOS.find(a=>a.nomes.some(n=>n.includes(q)||q.includes(n)));if(match){renderAtivo(match);empty.style.display="none";}else{results.innerHTML=`<div class="drug-card"><div class="pill">Ativo não encontrado</div><h1>Nenhum resultado para “${input.value}”.</h1><p>Experimente: <strong>Cardo mariano</strong> ou <strong>Silimarina</strong>.</p></div>`;empty.style.display="none";}});
-    function renderAtivo(a){results.innerHTML=`<article class="drug-card"><div class="pill">Hepatoprotetor</div><h1>${a.titulo}</h1>
-      <div class="grid grid-2"><section><h2>Indicações e contraindicações</h2><h3>Indicações</h3><ul>${a.indicacoes.map(i=>`<li>${i}</li>`).join('')}</ul>
-      <h3>Efeitos adversos</h3><ul>${a.efeitos.map(i=>`<li>${i}</li>`).join('')}</ul></section><section><h2>Dosagem para Cães e Gatos</h2>
-      <div class="calc"><div class="row" style="justify-content:space-between"><label><strong>Recomendado:</strong> ${a.dose.minMgKg}–${a.dose.maxMgKg} mg/kg</label>
-      <div class="actions"><input id="peso" type="number" min="0" step="0.1" placeholder="Peso (kg)"><button class="btn-ghost" id="btnPrescrever">Prescrever</button></div></div>
-      <div class="dose" id="doseBox">Informe o peso para calcular a dose.</div><div class="callout"><strong>Atenção:</strong> cálculo automático. Decisão final cabe ao prescritor.</div></div></section></div></article>`;
-      const pesoInput=document.getElementById('peso'),doseBox=document.getElementById('doseBox');pesoInput.addEventListener('input',()=>{const kg=parseFloat(pesoInput.value);
-      if(isNaN(kg)||kg<=0){doseBox.textContent="Informe o peso.";return;}const min=kg*a.dose.minMgKg,max=kg*a.dose.maxMgKg;doseBox.innerHTML=`Para <strong>${kg.toFixed(2)} kg</strong>:<br>• Dose mínima: <strong>${min.toFixed(1)} mg</strong><br>• Dose máxima: <strong>${max.toFixed(1)} mg</strong>`;});
-      document.getElementById('btnPrescrever').addEventListener('click',()=>alert('Função Prescrever em breve.'));}
+    const Auth = (() => {
+      const USERS_KEY = 'bf_users';
+      const SESSION_KEY = 'bf_session';
+
+      const loadUsers = () => {
+        try {
+          return JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+        } catch (err) {
+          console.error('Erro ao ler usuários', err);
+          return [];
+        }
+      };
+
+      const saveUsers = (users) => localStorage.setItem(USERS_KEY, JSON.stringify(users));
+
+      const validateEmail = (email) => /[^\s@]+@[^\s@]+\.[^\s@]+/.test(email);
+
+      return {
+        register({ nome, email, crmv, senha }) {
+          if (!validateEmail(email)) {
+            throw new Error('Informe um e-mail válido.');
+          }
+          if (!senha || senha.length < 6) {
+            throw new Error('Senha deve ter pelo menos 6 caracteres.');
+          }
+          if (!crmv.trim()) {
+            throw new Error('CRMV é obrigatório.');
+          }
+          const users = loadUsers();
+          if (users.some((user) => user.email.toLowerCase() === email.toLowerCase())) {
+            throw new Error('E-mail já cadastrado.');
+          }
+          const newUser = {
+            id: Date.now(),
+            nome,
+            email,
+            crmv,
+            senhaHash: btoa(unescape(encodeURIComponent(senha)))
+          };
+          users.push(newUser);
+          saveUsers(users);
+          return newUser;
+        },
+        login(email, senha) {
+          const users = loadUsers();
+          const senhaHash = btoa(unescape(encodeURIComponent(senha)));
+          const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase() && u.senhaHash === senhaHash);
+          if (!user) {
+            throw new Error('Credenciais inválidas.');
+          }
+          localStorage.setItem(SESSION_KEY, JSON.stringify({ id: user.id, nome: user.nome, email: user.email, crmv: user.crmv }));
+          return user;
+        },
+        logout() {
+          localStorage.removeItem(SESSION_KEY);
+        },
+        currentSession() {
+          try {
+            const raw = localStorage.getItem(SESSION_KEY);
+            return raw ? JSON.parse(raw) : null;
+          } catch (err) {
+            console.error('Erro ao ler sessão', err);
+            return null;
+          }
+        }
+      };
+    })();
+
+    const Store = (() => {
+      const PRESCRIPTIONS_KEY = 'bf_prescriptions';
+
+      const read = () => {
+        try {
+          return JSON.parse(localStorage.getItem(PRESCRIPTIONS_KEY) || '[]');
+        } catch (err) {
+          console.error('Erro ao carregar prescrições', err);
+          return [];
+        }
+      };
+
+      const write = (data) => localStorage.setItem(PRESCRIPTIONS_KEY, JSON.stringify(data));
+
+      return {
+        all() { return read(); },
+        add(prescription) {
+          const data = read();
+          data.unshift(prescription);
+          write(data);
+          return data;
+        }
+      };
+    })();
+
+    const Library = (() => {
+      const data = [
+        {
+          "id": "silimarina",
+          "nome": "Silimarina",
+          "classe": "Fitoterápico / Hepatoprotetor",
+          "subclasse": "Flavonolignanas",
+          "mecanismo": "Efeito antioxidante e estabilização de membrana hepatocitária",
+          "indicacoes": ["Doenças hepáticas", "Hepatoproteção", "Intoxicações"],
+          "especies": ["Cães", "Gatos"],
+          "dosagem": "20–50 mg/kg",
+          "forma": ["oral"],
+          "observacoes": "Geralmente bem tolerado."
+        },
+        {
+          "id": "itraconazol",
+          "nome": "Itraconazol",
+          "classe": "Antifúngico",
+          "subclasse": "Triazólico",
+          "mecanismo": "Inibição da síntese de ergosterol da membrana fúngica",
+          "indicacoes": ["Dermatomicoses", "Onicomicoses", "Micoses sistêmicas (selecionadas)"],
+          "especies": ["Cães", "Gatos"],
+          "dosagem": "5–10 mg/kg",
+          "forma": ["oral"],
+          "observacoes": "Monitorar função hepática em tratamentos prolongados."
+        },
+        {
+          "id": "pimobendan",
+          "nome": "Pimobendan",
+          "classe": "Cardiovascular",
+          "subclasse": "Inodilatador",
+          "mecanismo": "Sensibilização ao cálcio + inibição da fosfodiesterase III",
+          "indicacoes": ["Insuficiência cardíaca", "DVI/DCM em cães"],
+          "especies": ["Cães"],
+          "dosagem": "0,2–0,6 mg/kg/dia (dividido 2x)",
+          "forma": ["oral"],
+          "observacoes": "Administrar em jejum para melhor absorção."
+        },
+        {
+          "id": "cefalexina",
+          "nome": "Cefalexina",
+          "classe": "Antibiótico",
+          "subclasse": "Cefalosporina de 1ª geração",
+          "mecanismo": "Inibição da síntese da parede celular bacteriana",
+          "indicacoes": ["Dermatites bacterianas", "Infecções de tecidos moles"],
+          "especies": ["Cães", "Gatos"],
+          "dosagem": "20–30 mg/kg a cada 12h",
+          "forma": ["oral"],
+          "observacoes": "Ajustar dose em insuficiência renal."
+        },
+        {
+          "id": "enrofloxacino",
+          "nome": "Enrofloxacino",
+          "classe": "Antibiótico",
+          "subclasse": "Fluoroquinolona",
+          "mecanismo": "Inibição da DNA girase",
+          "indicacoes": ["Infecções bacterianas sensíveis"],
+          "especies": ["Cães", "Gatos (cautela)"],
+          "dosagem": "5–10 mg/kg a cada 24h",
+          "forma": ["oral", "injetável"],
+          "observacoes": "Evitar em animais jovens em crescimento; risco ocular em gatos com doses altas."
+        },
+        {
+          "id": "omeprazol",
+          "nome": "Omeprazol",
+          "classe": "Gastrointestinal",
+          "subclasse": "IBP (Inibidor da Bomba de Prótons)",
+          "mecanismo": "Inibição irreversível da H+/K+ ATPase",
+          "indicacoes": ["Gastrite", "Úlcera gástrica", "Refluxo"],
+          "especies": ["Cães", "Gatos"],
+          "dosagem": "0,5–1 mg/kg a cada 24h",
+          "forma": ["oral"],
+          "observacoes": "Administrar antes das refeições."
+        },
+        {
+          "id": "furosemida",
+          "nome": "Furosemida",
+          "classe": "Cardiovascular",
+          "subclasse": "Diurético de alça",
+          "mecanismo": "Inibição do co-transporte Na+/K+/2Cl- na alça de Henle",
+          "indicacoes": ["Edema", "Insuficiência cardíaca congestiva"],
+          "especies": ["Cães", "Gatos (cautela)"],
+          "dosagem": "1–2 mg/kg a cada 8–12h",
+          "forma": ["oral", "injetável"],
+          "observacoes": "Monitorar eletrólitos e função renal."
+        },
+        {
+          "id": "benazepril",
+          "nome": "Benazepril",
+          "classe": "Cardiovascular",
+          "subclasse": "IECA",
+          "mecanismo": "Inibição da enzima conversora de angiotensina",
+          "indicacoes": ["Insuficiência cardíaca", "Proteinúria"],
+          "especies": ["Cães", "Gatos"],
+          "dosagem": "0,25–0,5 mg/kg a cada 24h",
+          "forma": ["oral"],
+          "observacoes": "Monitorar pressão e creatinina, especialmente com diuréticos."
+        },
+        {
+          "id": "sildenafila",
+          "nome": "Sildenafila",
+          "classe": "Cardiovascular",
+          "subclasse": "Inibidor de PDE5",
+          "mecanismo": "Aumento de GMPc e vasodilatação pulmonar",
+          "indicacoes": ["Hipertensão pulmonar"],
+          "especies": ["Cães"],
+          "dosagem": "1–3 mg/kg a cada 8–12h",
+          "forma": ["oral"],
+          "observacoes": "Avaliar interação com outros vasodilatadores."
+        }
+      ];
+
+      const uniqueClasses = Array.from(new Set(data.map((item) => item.classe)));
+
+      const findById = (id) => data.find((item) => item.id === id);
+
+      const search = (term, classe) => {
+        const q = term.trim().toLowerCase();
+        return data.filter((item) => {
+          const matchesClasse = !classe || item.classe === classe;
+          if (!matchesClasse) return false;
+          if (!q) return true;
+          const haystack = [
+            item.nome,
+            item.classe,
+            item.subclasse || '',
+            item.mecanismo,
+            ...(item.indicacoes || [])
+          ].join(' ').toLowerCase();
+          return haystack.includes(q);
+        });
+      };
+
+      return {
+        all() { return data.slice(); },
+        search,
+        findById,
+        classes() { return uniqueClasses.slice(); }
+      };
+    })();
+    const UI = (() => {
+      const authView = document.getElementById('authView');
+      const appView = document.getElementById('appView');
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const authLoginTab = document.getElementById('authLoginTab');
+      const authRegisterTab = document.getElementById('authRegisterTab');
+      const headerUser = document.getElementById('headerUser');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const newPrescriptionBtn = document.getElementById('newPrescriptionBtn');
+      const themeToggle = document.getElementById('themeToggle');
+      const globalSearch = document.getElementById('globalSearch');
+      const globalSearchBtn = document.getElementById('globalSearchBtn');
+
+      const tabButtons = [
+        document.getElementById('tabBtnPrescrever'),
+        document.getElementById('tabBtnBiblioteca'),
+        document.getElementById('tabBtnHistorico'),
+        document.getElementById('tabBtnConfig')
+      ];
+      const tabPanels = [
+        document.getElementById('tab-prescrever'),
+        document.getElementById('tab-biblioteca'),
+        document.getElementById('tab-historico'),
+        document.getElementById('tab-config')
+      ];
+
+      const toastContainer = document.getElementById('toastContainer');
+
+      const toggleForms = (target) => {
+        const showingLogin = target === 'login';
+        loginForm.classList.toggle('hidden', !showingLogin);
+        registerForm.classList.toggle('hidden', showingLogin);
+        authLoginTab.classList.toggle('active', showingLogin);
+        authRegisterTab.classList.toggle('active', !showingLogin);
+        authLoginTab.setAttribute('aria-selected', showingLogin);
+        authRegisterTab.setAttribute('aria-selected', !showingLogin);
+        (showingLogin ? loginForm : registerForm).querySelector('input')?.focus();
+      };
+
+      const showToast = (message, type = 'success') => {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        toastContainer.appendChild(toast);
+        setTimeout(() => {
+          toast.classList.add('hidden');
+          setTimeout(() => toast.remove(), 200);
+        }, 3600);
+      };
+
+      const openTab = (index) => {
+        tabButtons.forEach((btn, idx) => {
+          const selected = idx === index;
+          btn.setAttribute('aria-selected', selected);
+          btn.classList.toggle('active', selected);
+          tabPanels[idx].classList.toggle('active', selected);
+        });
+        if (index === 2) {
+          Prescriptions.updateHistory();
+        }
+        if (index === 1) {
+          LibraryView.focusSearch();
+        }
+      };
+
+      const loadTheme = () => {
+        const stored = localStorage.getItem('bf_theme');
+        const useDark = stored ? stored === 'dark' : true;
+        document.body.classList.toggle('theme-light', !useDark);
+        themeToggle.checked = useDark;
+      };
+
+      const setTheme = (isDark) => {
+        document.body.classList.toggle('theme-light', !isDark);
+        localStorage.setItem('bf_theme', isDark ? 'dark' : 'light');
+      };
+
+      const enterApp = (user) => {
+        authView.classList.add('hidden');
+        appView.classList.remove('hidden');
+        headerUser.textContent = `Logado como: Dr(a). ${user.nome} — CRMV: ${user.crmv}`;
+        Prescriptions.setPrescriber(user);
+        Prescriptions.populateDatalist();
+        Prescriptions.updateHistory();
+        LibraryView.render();
+      };
+
+      const exitApp = () => {
+        Auth.logout();
+        appView.classList.add('hidden');
+        authView.classList.remove('hidden');
+        toggleForms('login');
+        loginForm.reset();
+        registerForm.reset();
+      };
+
+      authLoginTab.addEventListener('click', () => toggleForms('login'));
+      authRegisterTab.addEventListener('click', () => toggleForms('register'));
+
+      loginForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formData = new FormData(loginForm);
+        try {
+          const user = Auth.login(formData.get('email'), formData.get('senha'));
+          showToast(`Bem-vindo(a) de volta, Dr(a). ${user.nome}!`);
+          enterApp(user);
+          loginForm.reset();
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      });
+
+      registerForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formData = new FormData(registerForm);
+        try {
+          const user = Auth.register({
+            nome: formData.get('nome').trim(),
+            email: formData.get('email').trim(),
+            crmv: formData.get('crmv').trim(),
+            senha: formData.get('senha')
+          });
+          showToast('Cadastro realizado com sucesso! Faça login com suas credenciais.');
+          toggleForms('login');
+          loginForm.email.value = user.email;
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      });
+
+      logoutBtn.addEventListener('click', () => {
+        exitApp();
+        showToast('Sessão encerrada. Até breve!', 'success');
+      });
+
+      tabButtons.forEach((btn, idx) => {
+        btn.addEventListener('click', () => openTab(idx));
+      });
+
+      newPrescriptionBtn.addEventListener('click', () => {
+        openTab(0);
+        Prescriptions.resetForm();
+      });
+
+      themeToggle.addEventListener('change', (event) => setTheme(event.target.checked));
+
+      globalSearchBtn.addEventListener('click', () => {
+        LibraryView.setQuery(globalSearch.value);
+        openTab(1);
+      });
+
+      globalSearch.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          LibraryView.setQuery(globalSearch.value);
+          openTab(1);
+        }
+      });
+
+      loadTheme();
+
+      const initialize = () => {
+        const session = Auth.currentSession();
+        if (session) {
+          enterApp(session);
+        }
+      };
+
+      return { showToast, openTab, initialize };
+    })();
+
+    const LibraryView = (() => {
+      const listEl = document.getElementById('libraryList');
+      const searchInput = document.getElementById('librarySearch');
+      const filterSelect = document.getElementById('libraryFilter');
+      let currentQuery = '';
+      let currentFilter = '';
+
+      const renderList = () => {
+        const normalizedQuery = currentQuery.trim();
+        if (!normalizedQuery && !currentFilter) {
+          listEl.innerHTML = '<div class="empty-state accent">Ative a pesquisa digitando um ativo ou filtrando por classe terapêutica para explorar a biblioteca.</div>';
+          return;
+        }
+        const results = Library.search(normalizedQuery, currentFilter);
+        if (!results.length) {
+          listEl.innerHTML = '<div class="empty-state">Nenhum ativo encontrado para os filtros selecionados.</div>';
+          return;
+        }
+        listEl.innerHTML = results.map((item) => {
+          const indicacoes = (item.indicacoes || []).map((i) => `<li>${i}</li>`).join('');
+          const especies = (item.especies || []).map((e) => `<span>${e}</span>`).join('');
+          const formas = (item.forma || []).map((f) => `<span>${f}</span>`).join('');
+          return `
+            <article class="library-card">
+              <div class="badge">${item.classe}</div>
+              <h3>${item.nome}</h3>
+              <p class="muted">${item.subclasse || ''}</p>
+              <p><strong>Mecanismo:</strong> ${item.mecanismo}</p>
+              <div>
+                <strong>Indicações principais</strong>
+                <ul>${indicacoes}</ul>
+              </div>
+              <div class="pill-list" aria-label="Espécies indicadas">${especies}</div>
+              <p><strong>Dosagem recomendada:</strong> ${item.dosagem || 'Consultar literatura'}</p>
+              <div class="pill-list" aria-label="Formas farmacêuticas">${formas}</div>
+              <p class="muted">${item.observacoes || ''}</p>
+              <button class="btn" type="button" data-ativo="${item.id}">Usar na prescrição</button>
+            </article>
+          `;
+        }).join('');
+        listEl.querySelectorAll('[data-ativo]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const ativo = Library.findById(btn.dataset.ativo);
+            if (ativo) {
+              Prescriptions.setActiveFromLibrary(ativo);
+              UI.showToast(`${ativo.nome} adicionado ao formulário de prescrição.`);
+              UI.openTab(0);
+            }
+          });
+        });
+      };
+
+      searchInput.addEventListener('input', (event) => {
+        currentQuery = event.target.value || '';
+        renderList();
+      });
+
+      filterSelect.addEventListener('change', (event) => {
+        currentFilter = event.target.value || '';
+        renderList();
+      });
+
+      const renderFilterOptions = () => {
+        const options = Library.classes();
+        filterSelect.innerHTML = '<option value="">Todas as classes</option>' + options.map((classe) => `<option value="${classe}">${classe}</option>`).join('');
+      };
+
+      const setQuery = (query = '') => {
+        currentQuery = query;
+        searchInput.value = query;
+        if (filterSelect.value) {
+          filterSelect.value = '';
+          currentFilter = '';
+        }
+        renderList();
+      };
+
+      const focusSearch = () => searchInput.focus();
+
+      const render = () => {
+        renderFilterOptions();
+        renderList();
+      };
+
+      return { render, setQuery, focusSearch };
+    })();
+    const Prescriptions = (() => {
+      const form = document.getElementById('prescriptionForm');
+      const pesoInput = document.getElementById('peso');
+      const doseRange = document.getElementById('doseRange');
+      const doseMgKgInput = document.getElementById('doseMgKg');
+      const doseResumo = document.getElementById('doseResumo');
+      const doseHint = document.getElementById('doseHint');
+      const doseRangeWrapper = document.getElementById('doseRangeWrapper');
+      const ativoInput = document.getElementById('ativoNome');
+      const datalist = document.getElementById('ativosDatalist');
+      const resumoAtivo = document.getElementById('ativoResumo');
+      const referenciasAtivo = document.getElementById('referenciasAtivo');
+      const historicoContainer = document.getElementById('historicoContainer');
+
+      const previewModal = document.getElementById('previewModal');
+      const previewContent = document.getElementById('previewContent');
+      const closePreviewBtn = document.getElementById('closePreview');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const copyLinkBtn = document.getElementById('copyLinkBtn');
+
+      let prescriber = null;
+      let currentAtivo = null;
+      let currentRange = null;
+      let lastPreviewData = null;
+
+      const parseRange = (text) => {
+        if (!text) return null;
+        const normalized = text.replace(',', '.');
+        const regex = /(\d+(?:\.\d+)?)\s*[\u2013\-]\s*(\d+(?:\.\d+)?)/;
+        const match = normalized.match(regex);
+        if (match) {
+          const min = parseFloat(match[1]);
+          const max = parseFloat(match[2]);
+          if (!Number.isNaN(min) && !Number.isNaN(max)) {
+            return { min, max };
+          }
+        }
+        return null;
+      };
+
+      const updateDoseResumo = () => {
+        const peso = parseFloat(pesoInput.value);
+        const mgKg = parseFloat(doseMgKgInput.value);
+        if (!peso || peso <= 0 || !mgKg || mgKg <= 0) {
+          doseResumo.textContent = 'Informe peso e mg/kg para calcular a dose.';
+          return null;
+        }
+        const mgDose = peso * mgKg;
+        doseResumo.innerHTML = `Dose por administração: <strong>${mgDose.toFixed(2)} mg</strong><br>` +
+          `Cálculo baseado em ${mgKg.toFixed(2)} mg/kg para ${peso.toFixed(2)} kg.`;
+        return mgDose;
+      };
+
+      const updateAtivoResumo = () => {
+        if (!currentAtivo) {
+          resumoAtivo.textContent = 'Selecione um ativo na biblioteca ou utilize o campo acima.';
+          referenciasAtivo.innerHTML = '';
+          return;
+        }
+        resumoAtivo.innerHTML = `<strong>${currentAtivo.nome}</strong> · ${currentAtivo.classe}${currentAtivo.subclasse ? ` — ${currentAtivo.subclasse}` : ''}`;
+        referenciasAtivo.innerHTML = `
+          <p><strong>Indicações:</strong> ${(currentAtivo.indicacoes || []).join(', ')}</p>
+          <p><strong>Espécies:</strong> ${(currentAtivo.especies || []).join(', ')}</p>
+          <p><strong>Dosagem referência:</strong> ${currentAtivo.dosagem || 'Consultar literatura'}</p>
+          <p class="muted"><strong>Mecanismo:</strong> ${currentAtivo.mecanismo}</p>
+          <p class="muted">${currentAtivo.observacoes || ''}</p>
+        `;
+      };
+
+      const applyRange = (range) => {
+        currentRange = range;
+        if (range) {
+          doseRangeWrapper.classList.remove('hidden');
+          doseRangeWrapper.classList.remove('no-range');
+          doseRange.min = range.min;
+          doseRange.max = range.max;
+          const defaultValue = ((range.min + range.max) / 2).toFixed(2);
+          doseRange.value = defaultValue;
+          doseMgKgInput.value = defaultValue;
+          doseHint.textContent = `Intervalo recomendado: ${range.min} – ${range.max} mg/kg.`;
+        } else {
+          doseHint.textContent = 'Informe manualmente a posologia desejada.';
+          doseRangeWrapper.classList.add('no-range');
+        }
+        updateDoseResumo();
+      };
+
+      const setActiveFromLibrary = (ativo) => {
+        currentAtivo = ativo;
+        ativoInput.value = ativo.nome;
+        applyRange(parseRange(ativo.dosagem));
+        updateAtivoResumo();
+      };
+
+      const populateDatalist = () => {
+        datalist.innerHTML = Library.all().map((item) => `<option value="${item.nome}"></option>`).join('');
+      };
+
+      const detectAtivoByName = (nome) => {
+        if (!nome) return null;
+        const lower = nome.trim().toLowerCase();
+        return Library.all().find((item) => item.nome.toLowerCase() === lower);
+      };
+
+      const resetForm = () => {
+        form.reset();
+        currentAtivo = null;
+        currentRange = null;
+        doseHint.textContent = 'Selecione um ativo para sugestões de dose.';
+        resumoAtivo.textContent = 'Selecione um ativo na biblioteca ou utilize o campo acima.';
+        referenciasAtivo.innerHTML = '';
+        doseResumo.textContent = 'Informe peso e mg/kg para calcular a dose.';
+        doseRangeWrapper.classList.add('no-range');
+      };
+
+      const toggleModal = (open) => {
+        previewModal.classList.toggle('open', open);
+        if (open) {
+          previewModal.focus();
+        }
+      };
+
+      const generateHash = (payload) => {
+        let hash = 0;
+        const text = `${Date.now()}-${payload}`;
+        for (let i = 0; i < text.length; i += 1) {
+          hash = (hash << 5) - hash + text.charCodeAt(i);
+          hash |= 0;
+        }
+        return `BF-${Math.abs(hash).toString(16).toUpperCase()}`;
+      };
+
+      const buildPreview = (data) => {
+        const linhas = data.medicamentos.map((item, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${item.nome}</td>
+            <td>${item.doseMg.toFixed(2)} mg (${item.mgKg.toFixed(2)} mg/kg)</td>
+            <td>${item.frequencia} · ${item.duracao} dias</td>
+          </tr>
+        `).join('');
+
+        const nomePaciente = data.paciente || data.animal.nome;
+
+        return `
+          <div>
+            <strong>Prescritor:</strong> Dr(a). ${data.prescritor.nome} — CRMV ${data.prescritor.crmv}
+          </div>
+          <div>
+            <strong>Tutor:</strong> ${data.tutor || '—'} · <strong>Paciente:</strong> ${nomePaciente} (${data.animal.especie})
+          </div>
+          <div>
+            <strong>Peso:</strong> ${data.animal.peso.toFixed(2)} kg ${data.animal.idade ? `· <strong>Idade:</strong> ${data.animal.idade}` : ''}
+          </div>
+          <div>
+            <strong>Diagnóstico:</strong> ${data.diagnostico || '—'}
+          </div>
+          <table class="preview-table" aria-label="Resumo da prescrição">
+            <thead>
+              <tr><th>#</th><th>Medicamento</th><th>Dosagem</th><th>Posologia</th></tr>
+            </thead>
+            <tbody>${linhas}</tbody>
+          </table>
+          <div>
+            <strong>Observações:</strong>
+            <p>${data.observacoes || 'Sem observações adicionais.'}</p>
+          </div>
+          <div>
+            <strong>Hash de validação:</strong> ${data.hash}
+          </div>
+        `;
+      };
+
+      const buildPrescriptionHtml = (data) => {
+        const linhas = data.medicamentos.map((item, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${item.nome}</td>
+            <td>${item.doseMg.toFixed(2)} mg (${item.mgKg.toFixed(2)} mg/kg)</td>
+            <td>${item.frequencia} · ${item.duracao} dias</td>
+          </tr>
+        `).join('');
+
+        return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8" />
+          <title>Receita digital — ${data.animal.nome}</title>
+          <style>
+            body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#04090a;margin:0;padding:40px;color:#edf5f6;}
+            .sheet{max-width:760px;margin:0 auto;background:linear-gradient(165deg,rgba(12,28,31,0.95),rgba(6,16,18,0.92));border-radius:24px;padding:40px;border:1px solid rgba(59,203,208,0.35);box-shadow:0 28px 60px rgba(0,0,0,0.55);}
+            .header-brand{display:flex;gap:18px;align-items:center;margin-bottom:24px;}
+            .header-brand svg{width:72px;height:72px;filter:drop-shadow(0 12px 28px rgba(59,203,208,0.35));}
+            h1{margin:0;font-size:28px;color:#3BCBD0;text-transform:uppercase;letter-spacing:0.08em;}
+            .meta{display:grid;gap:12px;margin-bottom:28px;font-size:15px;color:rgba(207,247,245,0.9);}
+            table{width:100%;border-collapse:collapse;margin-bottom:28px;}
+            th,td{padding:14px 12px;border-bottom:1px solid rgba(59,203,208,0.24);text-align:left;font-size:14px;}
+            th{color:#3BCBD0;text-transform:uppercase;font-size:12px;letter-spacing:0.08em;}
+            tbody tr:last-child td{border-bottom:none;}
+            .observacoes{padding:18px;border-radius:18px;background:rgba(59,203,208,0.12);border:1px dashed rgba(59,203,208,0.45);font-size:14px;}
+            .hash{margin-top:18px;font-size:13px;color:rgba(207,247,245,0.72);}
+            .ads{margin-top:36px;padding:24px;border-radius:22px;background:linear-gradient(155deg,rgba(26,113,117,0.3),rgba(5,12,13,0.95));border:1px solid rgba(59,203,208,0.4);}
+            .ads h2{margin:0 0 12px;font-size:20px;color:#CFF9B9;}
+            .ads p{margin:0;font-size:14px;color:rgba(207,247,245,0.85);}
+            .ads-grid{display:grid;gap:16px;margin-top:18px;}
+            @media(min-width:640px){.ads-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+            .ads-card{position:relative;background:rgba(5,12,13,0.9);border-radius:18px;padding:20px;border:1px solid rgba(59,203,208,0.28);display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 44px rgba(0,0,0,0.48);}
+            .ads-card svg{width:68px;height:68px;}
+            .ads-card .badge{position:absolute;top:18px;right:18px;padding:4px 12px;border-radius:999px;background:rgba(59,203,208,0.18);color:#3BCBD0;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;}
+            .ads-card strong{font-size:16px;color:#CFF9B9;}
+            .ads-card a{align-self:flex-start;padding:8px 16px;border-radius:999px;border:1px solid rgba(59,203,208,0.6);color:#3BCBD0;text-decoration:none;font-weight:600;}
+            .footer-note{margin-top:24px;font-size:12px;color:rgba(207,247,245,0.6);}
+          </style>
+        </head><body>
+          <div class="sheet">
+            <div class="header-brand">
+              <svg viewBox="0 0 120 120" aria-hidden="true">
+                <rect x="50" y="10" width="20" height="100" rx="10" fill="#1A7175" />
+                <rect x="10" y="50" width="100" height="20" rx="10" fill="#3BCBD0" />
+                <circle cx="74" cy="48" r="18" fill="#CFF9B9" />
+                <path d="M64 34 L74 18 L84 34 Z" fill="#CFF9B9" />
+                <circle cx="74" cy="48" r="3.6" fill="#263238" />
+                <circle cx="66" cy="48" r="3.6" fill="#263238" />
+                <path d="M67 56 C70 59 73 59 77 56" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+                <circle cx="46" cy="74" r="20" fill="#9FD883" />
+                <path d="M32 78 C32 87 39 94 48 94 C57 94 64 87 64 78 C64 69 57 62 48 62 C39 62 32 69 32 78 Z" fill="#B4C165" opacity="0.55" />
+                <circle cx="40" cy="74" r="4" fill="#263238" />
+                <circle cx="54" cy="74" r="4" fill="#263238" />
+                <path d="M43 84 C47 88 51 88 55 84" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+              </svg>
+              <div>
+                <h1>Receita Digital Veterinária</h1>
+                <p style="margin:4px 0 0;font-size:13px;color:rgba(207,247,245,0.8);">Emitida por Biovetfarma — Manipulação Veterinária</p>
+              </div>
+            </div>
+            <div class="meta">
+              <div><strong>Prescritor:</strong> Dr(a). ${data.prescritor.nome} — CRMV ${data.prescritor.crmv}</div>
+              <div><strong>Tutor:</strong> ${data.tutor || '—'}</div>
+              <div><strong>Paciente:</strong> ${(data.paciente || data.animal.nome)} (${data.animal.especie}) · ${data.animal.peso.toFixed(2)} kg ${data.animal.idade ? `· ${data.animal.idade}` : ''}</div>
+              <div><strong>Diagnóstico:</strong> ${data.diagnostico || '—'}</div>
+              <div><strong>Data:</strong> ${new Date(data.criadoEm).toLocaleString('pt-BR')}</div>
+            </div>
+            <table>
+              <thead><tr><th>#</th><th>Medicamento</th><th>Dosagem</th><th>Posologia</th></tr></thead>
+              <tbody>${linhas}</tbody>
+            </table>
+            <div class="observacoes">
+              <strong>Observações para o tutor</strong>
+              <p>${data.observacoes || '—'}</p>
+            </div>
+            <div class="hash">Identificador da prescrição: ${data.hash}</div>
+            <div class="ads">
+              <h2>💊 Cuidados contínuos com a Biovetfarma</h2>
+              <p>Farmácias conveniadas anunciam aqui com condições especiais para tutores.</p>
+              <div class="ads-grid">
+                <div class="ads-card">
+                  <span class="badge">Manipulação</span>
+                  <svg viewBox="0 0 120 120" aria-hidden="true">
+                    <rect x="50" y="10" width="20" height="100" rx="10" fill="#1A7175" />
+                    <rect x="10" y="50" width="100" height="20" rx="10" fill="#3BCBD0" />
+                    <circle cx="74" cy="48" r="18" fill="#CFF9B9" />
+                    <path d="M64 34 L74 18 L84 34 Z" fill="#CFF9B9" />
+                    <circle cx="74" cy="48" r="3.6" fill="#263238" />
+                    <circle cx="66" cy="48" r="3.6" fill="#263238" />
+                    <path d="M67 56 C70 59 73 59 77 56" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+                    <circle cx="46" cy="74" r="20" fill="#9FD883" />
+                    <path d="M32 78 C32 87 39 94 48 94 C57 94 64 87 64 78 C64 69 57 62 48 62 C39 62 32 69 32 78 Z" fill="#B4C165" opacity="0.55" />
+                    <circle cx="40" cy="74" r="4" fill="#263238" />
+                    <circle cx="54" cy="74" r="4" fill="#263238" />
+                    <path d="M43 84 C47 88 51 88 55 84" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+                  </svg>
+                  <strong>Manipulação sob medida</strong>
+                  <p>Fórmulas personalizadas com rastreio digital e entrega em todo o Brasil.</p>
+                  <a href="https://biovetfarma.com.br" target="_blank" rel="noopener">Solicitar orçamento</a>
+                </div>
+                <div class="ads-card">
+                  <span class="badge">Logística</span>
+                  <svg viewBox="0 0 120 120" aria-hidden="true">
+                    <rect x="16" y="48" width="88" height="52" rx="18" fill="#1A7175" />
+                    <circle cx="38" cy="88" r="14" fill="#3BCBD0" />
+                    <circle cx="38" cy="88" r="6" fill="#0b1417" />
+                    <circle cx="82" cy="88" r="14" fill="#9FD883" />
+                    <circle cx="82" cy="88" r="6" fill="#0b1417" />
+                    <rect x="28" y="32" width="64" height="32" rx="12" fill="#CFF9B9" />
+                    <rect x="48" y="18" width="24" height="26" rx="12" fill="#B4C165" />
+                    <path d="M46 54 H74" stroke="#3BCBD0" stroke-width="4" stroke-linecap="round" />
+                  </svg>
+                  <strong>Rede Biovetfarma</strong>
+                  <p>Farmácias parceiras prontas para atender prescrições manipuladas.</p>
+                  <a href="https://biovetfarma.com.br" target="_blank" rel="noopener">Ver parceiros</a>
+                </div>
+              </div>
+              <p class="footer-note">Farmácias conveniadas anunciam aqui · biovetfarma.com.br</p>
+            </div>
+          </div>
+        </body></html>`;
+      };
+
+      const openPreview = (data) => {
+        lastPreviewData = data;
+        previewContent.innerHTML = buildPreview(data);
+        toggleModal(true);
+      };
+
+      const closePreview = () => {
+        toggleModal(false);
+      };
+
+      const handleDownload = () => {
+        if (!lastPreviewData) return;
+        const html = buildPrescriptionHtml(lastPreviewData);
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        const nomeAnimal = lastPreviewData.animal.nome.replace(/\s+/g, '-').toLowerCase();
+        link.download = `receita-${nomeAnimal}.html`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+      };
+
+      const handleCopyLink = async () => {
+        if (!lastPreviewData) return;
+        const html = buildPrescriptionHtml(lastPreviewData);
+        const encoded = encodeURIComponent(html);
+        const dataUrl = `data:text/html;charset=utf-8,${encoded}`;
+        try {
+          await navigator.clipboard.writeText(dataUrl);
+          UI.showToast('Link local copiado para a área de transferência.');
+        } catch (err) {
+          UI.showToast('Não foi possível copiar automaticamente. Copie manualmente após abrir o arquivo.', 'error');
+          window.open(dataUrl, '_blank');
+        }
+      };
+
+      const renderHistorico = (prescricoes) => {
+        if (!prescricoes.length) {
+          historicoContainer.innerHTML = '<div class="empty-state">Nenhuma prescrição gerada ainda. Utilize o botão "Gerar Receita Digital" para começar.</div>';
+          return;
+        }
+        const rows = prescricoes.map((item, index) => `
+          <tr>
+            <td>${new Date(item.criadoEm).toLocaleString('pt-BR')}</td>
+            <td>${item.animal.nome}</td>
+            <td>${item.animal.especie}</td>
+            <td>${item.medicamentos[0]?.nome || '—'}</td>
+            <td>${item.medicamentos[0]?.doseMg.toFixed(2) || '—'} mg</td>
+            <td>${item.medicamentos[0]?.duracao || '—'} dias</td>
+            <td>
+              <div class="actions-row">
+                <button class="btn-outline btn" data-action="ver" data-index="${index}" type="button">Ver</button>
+                <button class="btn" data-action="refazer" data-index="${index}" type="button">Prescrever novamente</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+        historicoContainer.innerHTML = `
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Animal</th>
+                <th>Espécie</th>
+                <th>Ativo</th>
+                <th>Dose</th>
+                <th>Duração</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        `;
+
+        historicoContainer.querySelectorAll('button[data-action="ver"]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const data = Store.all()[parseInt(btn.dataset.index, 10)];
+            if (data) {
+              openPreview(data);
+            }
+          });
+        });
+
+        historicoContainer.querySelectorAll('button[data-action="refazer"]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const data = Store.all()[parseInt(btn.dataset.index, 10)];
+            if (data) {
+              refillForm(data);
+              UI.openTab(0);
+              UI.showToast('Formulário preenchido com os dados da prescrição selecionada.');
+            }
+          });
+        });
+      };
+
+      const refillForm = (data) => {
+        form.reset();
+        document.getElementById('animalNome').value = data.animal.nome;
+        document.getElementById('especie').value = data.animal.especie;
+        document.getElementById('peso').value = data.animal.peso;
+        document.getElementById('idade').value = data.animal.idade || '';
+        document.getElementById('diagnostico').value = data.diagnostico || '';
+        document.getElementById('forma').value = data.medicamentos[0]?.forma || '';
+        document.getElementById('frequencia').value = data.medicamentos[0]?.frequencia || '';
+        document.getElementById('duracao').value = data.medicamentos[0]?.duracao || '';
+        document.getElementById('observacoes').value = data.observacoes || '';
+        const ativo = detectAtivoByName(data.medicamentos[0]?.nome || '');
+        if (ativo) {
+          setActiveFromLibrary(ativo);
+        } else {
+          ativoInput.value = data.medicamentos[0]?.nome || '';
+          doseMgKgInput.value = data.medicamentos[0]?.mgKg || '';
+          updateDoseResumo();
+        }
+        pesoInput.dispatchEvent(new Event('input'));
+      };
+
+      const createPrescriptionPayload = () => {
+        const animal = document.getElementById('animalNome').value.trim();
+        const especie = document.getElementById('especie').value;
+        const peso = parseFloat(pesoInput.value);
+        const idade = document.getElementById('idade').value.trim();
+        const diagnostico = document.getElementById('diagnostico').value.trim();
+        const ativoNome = ativoInput.value.trim();
+        const forma = document.getElementById('forma').value.trim();
+        const mgKg = parseFloat(doseMgKgInput.value);
+        const mgDose = updateDoseResumo();
+        const frequencia = document.getElementById('frequencia').value;
+        const duracao = document.getElementById('duracao').value;
+        const observacoes = document.getElementById('observacoes').value.trim();
+
+        if (!animal || !especie || !peso || !ativoNome || !mgKg || !mgDose || !frequencia || !duracao) {
+          throw new Error('Preencha todos os campos obrigatórios do formulário.');
+        }
+
+        const tutor = document.getElementById('tutorNome')?.value || '';
+        const paciente = document.getElementById('pacienteNome')?.value || animal;
+
+        const medicamento = {
+          nome: ativoNome,
+          forma,
+          mgKg,
+          doseMg: mgDose,
+          frequencia,
+          duracao,
+          observacoes
+        };
+
+        const hash = generateHash(JSON.stringify({ medicamento, animal, tutor, paciente }));
+
+        return {
+          prescritor: prescriber,
+          tutor,
+          paciente,
+          animal: { nome: animal, especie, peso, idade },
+          diagnostico,
+          medicamentos: [medicamento],
+          observacoes,
+          hash,
+          criadoEm: new Date().toISOString()
+        };
+      };
+
+      // Futuro: integração com farmácias parceiras (Firebase/Apps Script)
+      // function sendToPartnerPharmacies(prescription) {
+      //   return fetch('https://api.biovetfarma.example/prescriptions', {
+      //     method: 'POST',
+      //     body: JSON.stringify(prescription),
+      //     headers: { 'Content-Type': 'application/json' }
+      //   });
+      // }
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        try {
+          const payload = createPrescriptionPayload();
+          Store.add(payload);
+          openPreview(payload);
+          UI.showToast('Pré-visualização gerada! Revise antes de baixar ou compartilhar.');
+          resetForm();
+          renderHistorico(Store.all());
+          LibraryView.render();
+        } catch (err) {
+          UI.showToast(err.message, 'error');
+        }
+      });
+
+      pesoInput.addEventListener('input', updateDoseResumo);
+      doseMgKgInput.addEventListener('input', () => {
+        if (currentRange) {
+          const value = parseFloat(doseMgKgInput.value);
+          if (value >= currentRange.min && value <= currentRange.max) {
+            doseRange.value = value;
+          }
+        }
+        updateDoseResumo();
+      });
+
+      doseRange.addEventListener('input', (event) => {
+        doseMgKgInput.value = parseFloat(event.target.value).toFixed(2);
+        updateDoseResumo();
+      });
+
+      ativoInput.addEventListener('change', () => {
+        const ativo = detectAtivoByName(ativoInput.value);
+        if (ativo) {
+          setActiveFromLibrary(ativo);
+        } else {
+          currentAtivo = null;
+          currentRange = null;
+          doseHint.textContent = 'Informe manualmente a posologia desejada.';
+          referenciasAtivo.innerHTML = '';
+          resumoAtivo.textContent = ativoInput.value ? `Ativo personalizado: ${ativoInput.value}` : 'Selecione um ativo na biblioteca ou utilize o campo acima.';
+        }
+      });
+
+      closePreviewBtn.addEventListener('click', closePreview);
+      downloadBtn.addEventListener('click', handleDownload);
+      copyLinkBtn.addEventListener('click', handleCopyLink);
+      previewModal.addEventListener('click', (event) => {
+        if (event.target === previewModal) {
+          closePreview();
+        }
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closePreview();
+        }
+      });
+
+      const setPrescriber = (user) => {
+        prescriber = user;
+      };
+
+      const updateHistory = () => {
+        const data = Store.all();
+        renderHistorico(data);
+      };
+
+      return {
+        setActiveFromLibrary,
+        populateDatalist,
+        setPrescriber,
+        updateHistory,
+        resetForm
+      };
+    })();
+
+    UI.initialize();
   </script>
 </body>
 </html>

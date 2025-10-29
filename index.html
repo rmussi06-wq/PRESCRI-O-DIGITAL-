@@ -6,35 +6,50 @@
   <title>Biovetfarma — MVP Prescrição Digital Veterinária</title>
   <style>
     :root {
-      color-scheme: light dark;
-      --primary: #2E7D32;
-      --primary-dark: #1b5e20;
-      --secondary: #263238;
-      --bg: #f4f7f9;
+      color-scheme: dark;
+      --primary: #1A7175;
+      --primary-bright: #3BCBD0;
+      --accent-green: #9FD883;
+      --accent-light: #CFF9B9;
+      --accent-olive: #B4C165;
+      --accent-gold: #D6D37F;
+      --secondary: #0f1c1e;
+      --bg: #04090a;
+      --surface: #0b1417;
+      --surface-elevated: #101c1f;
+      --muted: rgba(237, 245, 246, 0.64);
+      --border: rgba(59, 203, 208, 0.28);
+      --shadow: 0 28px 60px rgba(0, 0, 0, 0.55);
+      --radius: 20px;
+      --text: #edf5f6;
+      --text-contrast: #050808;
+      --input-bg: rgba(12, 20, 22, 0.9);
+      --badge-bg: rgba(59, 203, 208, 0.18);
+      --badge-text: #3BCBD0;
+      --toast-success: rgba(159, 216, 131, 0.92);
+      --toast-error: rgba(198, 83, 83, 0.92);
+      --focus-ring: rgba(59, 203, 208, 0.55);
+      --focus-shadow: rgba(59, 203, 208, 0.2);
+      --surface-soft: rgba(19, 32, 35, 0.75);
+    }
+
+    body.theme-light {
+      color-scheme: light;
+      --bg: #f5faf9;
       --surface: #ffffff;
+      --surface-elevated: #ffffff;
+      --text: #263238;
       --muted: #60707b;
       --border: rgba(38, 50, 56, 0.1);
       --shadow: 0 18px 48px rgba(38, 50, 56, 0.12);
-      --radius: 16px;
-      --text: #263238;
-      --text-contrast: #ffffff;
-      --surface-elevated: #ffffff;
       --input-bg: #ffffff;
-      --badge-bg: rgba(46, 125, 50, 0.14);
-      --badge-text: #1b5e20;
-    }
-
-    body.theme-dark {
-      --bg: #111b22;
-      --surface: #16232b;
-      --surface-elevated: #1d2d38;
-      --text: #f4f7f9;
-      --muted: #9aacb8;
-      --border: rgba(148, 164, 175, 0.18);
-      --shadow: 0 22px 46px rgba(0, 0, 0, 0.45);
-      --input-bg: #132028;
-      --badge-bg: rgba(76, 175, 80, 0.24);
-      --badge-text: #c5f7c8;
+      --badge-bg: rgba(59, 203, 208, 0.12);
+      --badge-text: #1A7175;
+      --toast-success: rgba(159, 216, 131, 0.75);
+      --toast-error: rgba(198, 83, 83, 0.75);
+      --focus-ring: rgba(26, 113, 117, 0.6);
+      --focus-shadow: rgba(59, 203, 208, 0.25);
+      --surface-soft: rgba(255, 255, 255, 0.9);
     }
 
     * { box-sizing: border-box; }
@@ -42,12 +57,16 @@
     body {
       margin: 0;
       font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
+      background:
+        radial-gradient(circle at 12% 18%, rgba(59, 203, 208, 0.28), transparent 58%),
+        radial-gradient(circle at 88% 12%, rgba(159, 216, 131, 0.22), transparent 55%),
+        radial-gradient(circle at 50% 100%, rgba(214, 211, 127, 0.24), transparent 60%),
+        var(--bg);
       color: var(--text);
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      padding: 24px 12px 48px;
+      padding: 32px 16px 72px;
     }
 
     h1, h2, h3, h4 { margin: 0; font-weight: 700; }
@@ -63,60 +82,71 @@
     }
 
     .card {
-      background: var(--surface);
+      background: linear-gradient(170deg, rgba(11, 28, 31, 0.92), rgba(11, 28, 31, 0.78));
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 28px;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(59, 203, 208, 0.22);
+      backdrop-filter: blur(18px);
     }
 
     .auth-card {
-      max-width: 420px;
+      max-width: 460px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 24px;
       text-align: left;
+      background: linear-gradient(160deg, rgba(11, 24, 27, 0.92), rgba(11, 24, 27, 0.82));
+      border: 1px solid rgba(59, 203, 208, 0.35);
+      backdrop-filter: blur(18px);
     }
 
     .brand {
       display: flex;
-      gap: 12px;
+      gap: 16px;
       align-items: center;
       justify-content: center;
-      color: var(--primary);
+      color: var(--accent-light);
+      text-align: left;
     }
 
     .brand-logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(46, 125, 50, 0.18), rgba(46, 125, 50, 0.5));
+      width: 64px;
+      height: 64px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 10px 24px rgba(59, 203, 208, 0.35));
+    }
+
+    .brand-logo--small {
+      width: 48px;
+      height: 48px;
     }
 
     .tabs-toggle {
       display: flex;
-      background: rgba(38, 50, 56, 0.04);
+      background: rgba(59, 203, 208, 0.08);
       border-radius: 999px;
-      padding: 4px;
-      gap: 4px;
+      padding: 5px;
+      gap: 6px;
     }
 
     .tabs-toggle button {
       flex: 1;
       border: none;
       border-radius: 999px;
-      padding: 10px 14px;
+      padding: 11px 16px;
       background: transparent;
       color: var(--muted);
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s ease, color 0.2s ease;
+      transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
     }
 
     .tabs-toggle button.active {
-      background: var(--primary);
+      background: linear-gradient(135deg, rgba(59, 203, 208, 0.28), rgba(26, 113, 117, 0.9));
       color: #ffffff;
+      transform: translateY(-1px);
     }
 
     form {
@@ -128,10 +158,10 @@
     label {
       font-size: 14px;
       font-weight: 600;
-      color: var(--secondary);
+      color: rgba(237, 245, 246, 0.85);
     }
 
-    body.theme-dark label { color: #cfd8dc; }
+    body.theme-light label { color: #193137; }
 
     input, select, textarea {
       padding: 12px 14px;
@@ -141,43 +171,47 @@
       color: inherit;
       font-size: 15px;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      backdrop-filter: blur(14px);
     }
 
     textarea { resize: vertical; min-height: 120px; }
 
     input:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: rgba(46, 125, 50, 0.6);
-      box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.18);
+      border-color: var(--focus-ring);
+      box-shadow: 0 0 0 4px var(--focus-shadow);
     }
 
     .btn {
       border: none;
-      border-radius: 12px;
-      padding: 13px 18px;
+      border-radius: 14px;
+      padding: 13px 20px;
       font-weight: 600;
-      background: var(--primary);
-      color: var(--text-contrast);
+      background: linear-gradient(135deg, rgba(26, 113, 117, 0.9), rgba(59, 203, 208, 0.9));
+      color: #041315;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: transform 0.12s ease, filter 0.2s ease;
+      transition: transform 0.12s ease, filter 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 14px 32px rgba(26, 113, 117, 0.32);
     }
 
-    .btn:hover { filter: brightness(1.05); }
+    .btn:hover { filter: brightness(1.05); box-shadow: 0 16px 36px rgba(59, 203, 208, 0.42); }
     .btn:active { transform: translateY(1px); }
 
     .btn-outline {
       background: transparent;
-      border: 1px solid rgba(46, 125, 50, 0.3);
-      color: var(--primary);
+      border: 1px solid rgba(59, 203, 208, 0.45);
+      color: var(--primary-bright);
+      box-shadow: none;
     }
 
     .btn-ghost {
-      background: rgba(46, 125, 50, 0.12);
-      color: var(--primary);
+      background: rgba(59, 203, 208, 0.12);
+      color: var(--primary-bright);
+      box-shadow: none;
     }
 
     .app-header {
@@ -208,13 +242,13 @@
     }
 
     .header-info {
-      background: var(--surface);
+      background: linear-gradient(165deg, rgba(12, 28, 31, 0.92), rgba(8, 18, 20, 0.88));
       border-radius: var(--radius);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(59, 203, 208, 0.28);
       padding: 16px 20px;
       display: flex;
-      flex-direction: column;
-      gap: 6px;
+      align-items: center;
+      gap: 16px;
       box-shadow: var(--shadow);
     }
 
@@ -244,18 +278,20 @@
 
     .tab-btn {
       padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      box-shadow: var(--shadow);
+      border-radius: 16px;
+      border: 1px solid rgba(59, 203, 208, 0.18);
+      background: linear-gradient(160deg, rgba(10, 24, 27, 0.92), rgba(8, 18, 20, 0.88));
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.38);
       color: inherit;
       font-weight: 600;
       cursor: pointer;
-      transition: border-color 0.2s ease, transform 0.12s ease;
+      transition: border-color 0.2s ease, transform 0.12s ease, box-shadow 0.2s ease;
     }
 
     .tab-btn[aria-selected="true"] {
-      border-color: rgba(46, 125, 50, 0.6);
+      border-color: var(--primary-bright);
+      box-shadow: 0 18px 36px rgba(59, 203, 208, 0.28);
+      transform: translateY(-1px);
     }
 
     .tab-panel { display: none; }
@@ -285,14 +321,14 @@
     }
 
     .library-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: linear-gradient(165deg, rgba(12, 28, 31, 0.94), rgba(8, 18, 20, 0.86));
+      border: 1px solid rgba(59, 203, 208, 0.22);
       border-radius: var(--radius);
-      padding: 20px;
+      padding: 22px;
       box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
 
     .badge {
@@ -309,8 +345,14 @@
     }
 
     .pill-list { display: flex; flex-wrap: wrap; gap: 6px; }
-    .pill-list span { background: rgba(38, 50, 56, 0.08); padding: 4px 8px; border-radius: 999px; font-size: 12px; }
-    body.theme-dark .pill-list span { background: rgba(148, 164, 175, 0.22); }
+    .pill-list span {
+      background: rgba(59, 203, 208, 0.14);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--badge-text);
+    }
+    body.theme-light .pill-list span { background: rgba(26, 113, 117, 0.12); color: #1A7175; }
 
     .prescription-grid {
       display: grid;
@@ -322,20 +364,71 @@
     }
 
     .prescription-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: linear-gradient(165deg, rgba(12, 28, 31, 0.92), rgba(9, 20, 22, 0.9));
+      border: 1px solid rgba(59, 203, 208, 0.24);
       border-radius: var(--radius);
-      padding: 22px;
+      padding: 24px;
       box-shadow: var(--shadow);
     }
 
+    .promo-card {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      background: linear-gradient(165deg, rgba(26, 113, 117, 0.18), rgba(10, 26, 28, 0.92));
+      border: 1px solid rgba(59, 203, 208, 0.36);
+      padding: 26px;
+    }
+
+    .promo-gallery {
+      display: grid;
+      gap: 14px;
+    }
+
+    @media (min-width: 880px) {
+      .promo-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .promo-tile {
+      position: relative;
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(150deg, rgba(11, 24, 27, 0.82), rgba(11, 24, 27, 0.65));
+      border: 1px solid rgba(59, 203, 208, 0.28);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .promo-tile svg {
+      width: 72px;
+      height: 72px;
+      align-self: flex-start;
+    }
+
+    .promo-tile .badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(214, 211, 127, 0.28);
+      color: #D6D37F;
+    }
+
+    .promo-tile button {
+      align-self: flex-start;
+      border-radius: 999px;
+      padding: 8px 16px;
+    }
+
     .dose-box {
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: rgba(46, 125, 50, 0.08);
-      border: 1px dashed rgba(46, 125, 50, 0.36);
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: rgba(59, 203, 208, 0.12);
+      border: 1px dashed rgba(59, 203, 208, 0.45);
       font-size: 14px;
-      line-height: 1.4;
+      line-height: 1.5;
+      color: var(--accent-light);
     }
 
     .range-wrapper {
@@ -369,16 +462,23 @@
     }
 
     .history-table tbody tr:hover {
-      background: rgba(46, 125, 50, 0.08);
+      background: rgba(59, 203, 208, 0.14);
     }
 
     .empty-state {
       padding: 22px;
       border-radius: var(--radius);
-      border: 1px dashed var(--border);
+      border: 1px dashed rgba(59, 203, 208, 0.32);
       text-align: center;
       color: var(--muted);
-      background: var(--surface);
+      background: linear-gradient(160deg, rgba(12, 28, 31, 0.9), rgba(8, 18, 20, 0.82));
+    }
+
+    .empty-state.accent {
+      border-style: solid;
+      border-color: rgba(59, 203, 208, 0.45);
+      color: var(--accent-light);
+      background: linear-gradient(160deg, rgba(26, 113, 117, 0.18), rgba(8, 18, 20, 0.85));
     }
 
     .toast-container {
@@ -394,17 +494,18 @@
     .toast {
       padding: 14px 18px;
       border-radius: 12px;
-      background: var(--surface-elevated);
-      border: 1px solid rgba(46, 125, 50, 0.28);
+      background: rgba(9, 20, 22, 0.95);
+      border: 1px solid rgba(59, 203, 208, 0.28);
       box-shadow: var(--shadow);
       font-size: 14px;
       display: flex;
       gap: 12px;
       align-items: center;
+      color: var(--text);
     }
 
-    .toast.error { border-color: rgba(198, 40, 40, 0.45); color: #d32f2f; }
-    .toast.success { border-color: rgba(46, 125, 50, 0.45); color: #1b5e20; }
+    .toast.error { border-color: rgba(198, 83, 83, 0.65); color: var(--toast-error); }
+    .toast.success { border-color: rgba(159, 216, 131, 0.6); color: var(--toast-success); }
 
     .modal {
       position: fixed;
@@ -448,11 +549,12 @@
     }
 
     .preview-receita {
-      background: rgba(38, 50, 56, 0.04);
+      background: linear-gradient(165deg, rgba(12, 28, 31, 0.92), rgba(9, 20, 22, 0.86));
       border-radius: var(--radius);
       padding: 18px;
       display: grid;
       gap: 12px;
+      border: 1px solid rgba(59, 203, 208, 0.26);
     }
 
     .preview-table {
@@ -482,26 +584,28 @@
     .switch-slider {
       width: 44px;
       height: 24px;
-      background: rgba(38, 50, 56, 0.25);
+      background: rgba(59, 203, 208, 0.18);
       border-radius: 999px;
       position: relative;
       transition: background 0.2s ease;
+      border: 1px solid rgba(59, 203, 208, 0.32);
     }
 
     .switch-slider::after {
       content: "";
       position: absolute;
-      top: 3px;
-      left: 4px;
+      top: 2px;
+      left: 3px;
       width: 18px;
       height: 18px;
       background: #ffffff;
       border-radius: 50%;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
       transition: transform 0.2s ease;
     }
 
     .switch input:checked + .switch-slider {
-      background: var(--primary);
+      background: linear-gradient(135deg, rgba(26, 113, 117, 0.92), rgba(59, 203, 208, 0.82));
     }
 
     .switch input:checked + .switch-slider::after {
@@ -509,9 +613,9 @@
     }
 
     .config-card {
-      background: var(--surface);
+      background: linear-gradient(165deg, rgba(12, 28, 31, 0.9), rgba(8, 18, 20, 0.88));
       border-radius: var(--radius);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(59, 203, 208, 0.24);
       padding: 20px;
       box-shadow: var(--shadow);
       display: grid;
@@ -528,7 +632,20 @@
   <div class="app-shell">
     <section id="authView" class="card auth-card" aria-label="Autenticação">
       <div class="brand">
-        <span class="brand-logo" aria-hidden="true"></span>
+        <svg class="brand-logo" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+          <rect x="50" y="10" width="20" height="100" rx="10" fill="#1A7175" />
+          <rect x="10" y="50" width="100" height="20" rx="10" fill="#3BCBD0" />
+          <circle cx="74" cy="48" r="18" fill="#CFF9B9" />
+          <path d="M64 34 L74 18 L84 34 Z" fill="#CFF9B9" />
+          <circle cx="74" cy="48" r="3.6" fill="#263238" />
+          <circle cx="66" cy="48" r="3.6" fill="#263238" />
+          <path d="M67 56 C70 59 73 59 77 56" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+          <circle cx="46" cy="74" r="20" fill="#9FD883" />
+          <path d="M32 78 C32 87 39 94 48 94 C57 94 64 87 64 78 C64 69 57 62 48 62 C39 62 32 69 32 78 Z" fill="#B4C165" opacity="0.55" />
+          <circle cx="40" cy="74" r="4" fill="#263238" />
+          <circle cx="54" cy="74" r="4" fill="#263238" />
+          <path d="M43 84 C47 88 51 88 55 84" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+        </svg>
         <div>
           <h1>Biovetfarma — MVP Prescrição</h1>
           <p class="muted">Acesse com seu CRMV para gerenciar prescrições digitais.</p>
@@ -574,8 +691,24 @@
       <header class="app-header">
         <div class="header-top">
           <div class="header-info" aria-live="polite">
-            <h2>Biovetfarma — MVP Prescrição</h2>
-            <p id="headerUser" class="muted"></p>
+            <svg class="brand-logo brand-logo--small" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+              <rect x="50" y="10" width="20" height="100" rx="10" fill="#1A7175" />
+              <rect x="10" y="50" width="100" height="20" rx="10" fill="#3BCBD0" />
+              <circle cx="74" cy="48" r="18" fill="#CFF9B9" />
+              <path d="M64 34 L74 18 L84 34 Z" fill="#CFF9B9" />
+              <circle cx="74" cy="48" r="3.6" fill="#263238" />
+              <circle cx="66" cy="48" r="3.6" fill="#263238" />
+              <path d="M67 56 C70 59 73 59 77 56" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+              <circle cx="46" cy="74" r="20" fill="#9FD883" />
+              <path d="M32 78 C32 87 39 94 48 94 C57 94 64 87 64 78 C64 69 57 62 48 62 C39 62 32 69 32 78 Z" fill="#B4C165" opacity="0.55" />
+              <circle cx="40" cy="74" r="4" fill="#263238" />
+              <circle cx="54" cy="74" r="4" fill="#263238" />
+              <path d="M43 84 C47 88 51 88 55 84" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+            </svg>
+            <div>
+              <h2>Biovetfarma — MVP Prescrição</h2>
+              <p id="headerUser" class="muted"></p>
+            </div>
           </div>
           <div class="header-actions">
             <div class="header-search">
@@ -681,6 +814,50 @@
               <h3>Referências rápidas</h3>
               <div id="ativoResumo" class="muted">Selecione um ativo na biblioteca ou utilize o campo acima.</div>
               <div id="referenciasAtivo"></div>
+            </article>
+            <article class="prescription-card promo-card" aria-label="Campanhas Biovetfarma">
+              <div>
+                <h3>Campanhas Biovetfarma</h3>
+                <p class="muted">Manipulação veterinária premium, logística ágil e suporte clínico para o prescritor.</p>
+              </div>
+              <div class="promo-gallery">
+                <div class="promo-tile">
+                  <span class="badge">Manipulação</span>
+                  <svg viewBox="0 0 120 120" role="img" aria-label="Mascote Biovetfarma">
+                    <rect x="50" y="10" width="20" height="100" rx="10" fill="#1A7175" />
+                    <rect x="10" y="50" width="100" height="20" rx="10" fill="#3BCBD0" />
+                    <circle cx="74" cy="48" r="18" fill="#CFF9B9" />
+                    <path d="M64 34 L74 18 L84 34 Z" fill="#CFF9B9" />
+                    <circle cx="74" cy="48" r="3.6" fill="#263238" />
+                    <circle cx="66" cy="48" r="3.6" fill="#263238" />
+                    <path d="M67 56 C70 59 73 59 77 56" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+                    <circle cx="46" cy="74" r="20" fill="#9FD883" />
+                    <path d="M32 78 C32 87 39 94 48 94 C57 94 64 87 64 78 C64 69 57 62 48 62 C39 62 32 69 32 78 Z" fill="#B4C165" opacity="0.55" />
+                    <circle cx="40" cy="74" r="4" fill="#263238" />
+                    <circle cx="54" cy="74" r="4" fill="#263238" />
+                    <path d="M43 84 C47 88 51 88 55 84" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+                  </svg>
+                  <strong>Manipulação sob medida</strong>
+                  <p class="muted">Fórmulas personalizadas com rastreio digital e entrega nacional.</p>
+                  <button class="btn-outline btn" type="button">Falar com a equipe</button>
+                </div>
+                <div class="promo-tile">
+                  <span class="badge">Parcerias</span>
+                  <svg viewBox="0 0 120 120" role="img" aria-label="Logística Biovetfarma">
+                    <rect x="16" y="48" width="88" height="52" rx="18" fill="#1A7175" />
+                    <circle cx="38" cy="88" r="14" fill="#3BCBD0" />
+                    <circle cx="38" cy="88" r="6" fill="#0b1417" />
+                    <circle cx="82" cy="88" r="14" fill="#9FD883" />
+                    <circle cx="82" cy="88" r="6" fill="#0b1417" />
+                    <rect x="28" y="32" width="64" height="32" rx="12" fill="#CFF9B9" />
+                    <rect x="48" y="18" width="24" height="26" rx="12" fill="#B4C165" />
+                    <path d="M46 54 H74" stroke="#1A7175" stroke-width="4" stroke-linecap="round" />
+                  </svg>
+                  <strong>Farmácias conveniadas</strong>
+                  <p class="muted">Rede parceira com condições especiais para tutores e clínicas.</p>
+                  <button class="btn-outline btn" type="button">Ver parceiros</button>
+                </div>
+              </div>
             </article>
           </div>
         </section>
@@ -1040,14 +1217,13 @@
 
       const loadTheme = () => {
         const stored = localStorage.getItem('bf_theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const useDark = stored ? stored === 'dark' : prefersDark;
-        document.body.classList.toggle('theme-dark', useDark);
+        const useDark = stored ? stored === 'dark' : true;
+        document.body.classList.toggle('theme-light', !useDark);
         themeToggle.checked = useDark;
       };
 
       const setTheme = (isDark) => {
-        document.body.classList.toggle('theme-dark', isDark);
+        document.body.classList.toggle('theme-light', !isDark);
         localStorage.setItem('bf_theme', isDark ? 'dark' : 'light');
       };
 
@@ -1153,7 +1329,12 @@
       let currentFilter = '';
 
       const renderList = () => {
-        const results = Library.search(currentQuery, currentFilter);
+        const normalizedQuery = currentQuery.trim();
+        if (!normalizedQuery && !currentFilter) {
+          listEl.innerHTML = '<div class="empty-state accent">Ative a pesquisa digitando um ativo ou filtrando por classe terapêutica para explorar a biblioteca.</div>';
+          return;
+        }
+        const results = Library.search(normalizedQuery, currentFilter);
         if (!results.length) {
           listEl.innerHTML = '<div class="empty-state">Nenhum ativo encontrado para os filtros selecionados.</div>';
           return;
@@ -1193,12 +1374,12 @@
       };
 
       searchInput.addEventListener('input', (event) => {
-        currentQuery = event.target.value;
+        currentQuery = event.target.value || '';
         renderList();
       });
 
       filterSelect.addEventListener('change', (event) => {
-        currentFilter = event.target.value;
+        currentFilter = event.target.value || '';
         renderList();
       });
 
@@ -1207,9 +1388,13 @@
         filterSelect.innerHTML = '<option value="">Todas as classes</option>' + options.map((classe) => `<option value="${classe}">${classe}</option>`).join('');
       };
 
-      const setQuery = (query) => {
+      const setQuery = (query = '') => {
         currentQuery = query;
         searchInput.value = query;
+        if (filterSelect.value) {
+          filterSelect.value = '';
+          currentFilter = '';
+        }
         renderList();
       };
 
@@ -1408,25 +1593,52 @@
         return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8" />
           <title>Receita digital — ${data.animal.nome}</title>
           <style>
-            body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f7f9;margin:0;padding:32px;color:#263238;}
-            .sheet{max-width:720px;margin:0 auto;background:#fff;border-radius:20px;padding:36px;box-shadow:0 18px 46px rgba(38,50,56,0.16);border:1px solid rgba(38,50,56,0.08);}
-            h1{margin:0 0 12px;font-size:26px;color:#2E7D32;text-transform:uppercase;letter-spacing:0.05em;}
-            .meta{display:grid;gap:10px;margin-bottom:24px;font-size:15px;}
-            table{width:100%;border-collapse:collapse;margin-bottom:24px;}
-            th,td{padding:12px 10px;border-bottom:1px solid rgba(38,50,56,0.12);text-align:left;font-size:14px;}
+            body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#04090a;margin:0;padding:40px;color:#edf5f6;}
+            .sheet{max-width:760px;margin:0 auto;background:linear-gradient(165deg,rgba(12,28,31,0.95),rgba(6,16,18,0.92));border-radius:24px;padding:40px;border:1px solid rgba(59,203,208,0.35);box-shadow:0 28px 60px rgba(0,0,0,0.55);}
+            .header-brand{display:flex;gap:18px;align-items:center;margin-bottom:24px;}
+            .header-brand svg{width:72px;height:72px;filter:drop-shadow(0 12px 28px rgba(59,203,208,0.35));}
+            h1{margin:0;font-size:28px;color:#3BCBD0;text-transform:uppercase;letter-spacing:0.08em;}
+            .meta{display:grid;gap:12px;margin-bottom:28px;font-size:15px;color:rgba(207,247,245,0.9);}
+            table{width:100%;border-collapse:collapse;margin-bottom:28px;}
+            th,td{padding:14px 12px;border-bottom:1px solid rgba(59,203,208,0.24);text-align:left;font-size:14px;}
+            th{color:#3BCBD0;text-transform:uppercase;font-size:12px;letter-spacing:0.08em;}
             tbody tr:last-child td{border-bottom:none;}
-            .observacoes{padding:16px;border-radius:14px;background:rgba(46,125,50,0.08);border:1px dashed rgba(46,125,50,0.25);font-size:14px;}
-            .hash{margin-top:18px;font-size:13px;color:#60707b;}
-            .ads{margin-top:32px;padding:20px;border-radius:18px;background:linear-gradient(120deg,rgba(46,125,50,0.1),rgba(46,125,50,0.02));border:1px solid rgba(46,125,50,0.12);}
-            .ads h2{margin:0 0 12px;font-size:18px;color:#2E7D32;}
-            .ads-grid{display:grid;gap:12px;grid-template-columns:1fr;}
-            .ads-card{background:#fff;border-radius:16px;padding:16px;border:1px solid rgba(38,50,56,0.08);display:flex;flex-direction:column;gap:6px;}
-            .ads-card button{align-self:flex-start;padding:8px 14px;border-radius:999px;border:1px solid #2E7D32;background:transparent;color:#2E7D32;font-weight:600;cursor:pointer;}
-            @media(min-width:640px){.ads-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+            .observacoes{padding:18px;border-radius:18px;background:rgba(59,203,208,0.12);border:1px dashed rgba(59,203,208,0.45);font-size:14px;}
+            .hash{margin-top:18px;font-size:13px;color:rgba(207,247,245,0.72);}
+            .ads{margin-top:36px;padding:24px;border-radius:22px;background:linear-gradient(155deg,rgba(26,113,117,0.3),rgba(5,12,13,0.95));border:1px solid rgba(59,203,208,0.4);}
+            .ads h2{margin:0 0 12px;font-size:20px;color:#CFF9B9;}
+            .ads p{margin:0;font-size:14px;color:rgba(207,247,245,0.85);}
+            .ads-grid{display:grid;gap:16px;margin-top:18px;}
+            @media(min-width:640px){.ads-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+            .ads-card{position:relative;background:rgba(5,12,13,0.9);border-radius:18px;padding:20px;border:1px solid rgba(59,203,208,0.28);display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 44px rgba(0,0,0,0.48);}
+            .ads-card svg{width:68px;height:68px;}
+            .ads-card .badge{position:absolute;top:18px;right:18px;padding:4px 12px;border-radius:999px;background:rgba(59,203,208,0.18);color:#3BCBD0;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;}
+            .ads-card strong{font-size:16px;color:#CFF9B9;}
+            .ads-card a{align-self:flex-start;padding:8px 16px;border-radius:999px;border:1px solid rgba(59,203,208,0.6);color:#3BCBD0;text-decoration:none;font-weight:600;}
+            .footer-note{margin-top:24px;font-size:12px;color:rgba(207,247,245,0.6);}
           </style>
         </head><body>
           <div class="sheet">
-            <h1>Receita Digital Veterinária</h1>
+            <div class="header-brand">
+              <svg viewBox="0 0 120 120" aria-hidden="true">
+                <rect x="50" y="10" width="20" height="100" rx="10" fill="#1A7175" />
+                <rect x="10" y="50" width="100" height="20" rx="10" fill="#3BCBD0" />
+                <circle cx="74" cy="48" r="18" fill="#CFF9B9" />
+                <path d="M64 34 L74 18 L84 34 Z" fill="#CFF9B9" />
+                <circle cx="74" cy="48" r="3.6" fill="#263238" />
+                <circle cx="66" cy="48" r="3.6" fill="#263238" />
+                <path d="M67 56 C70 59 73 59 77 56" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+                <circle cx="46" cy="74" r="20" fill="#9FD883" />
+                <path d="M32 78 C32 87 39 94 48 94 C57 94 64 87 64 78 C64 69 57 62 48 62 C39 62 32 69 32 78 Z" fill="#B4C165" opacity="0.55" />
+                <circle cx="40" cy="74" r="4" fill="#263238" />
+                <circle cx="54" cy="74" r="4" fill="#263238" />
+                <path d="M43 84 C47 88 51 88 55 84" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+              </svg>
+              <div>
+                <h1>Receita Digital Veterinária</h1>
+                <p style="margin:4px 0 0;font-size:13px;color:rgba(207,247,245,0.8);">Emitida por Biovetfarma — Manipulação Veterinária</p>
+              </div>
+            </div>
             <div class="meta">
               <div><strong>Prescritor:</strong> Dr(a). ${data.prescritor.nome} — CRMV ${data.prescritor.crmv}</div>
               <div><strong>Tutor:</strong> ${data.tutor || '—'}</div>
@@ -1444,13 +1656,47 @@
             </div>
             <div class="hash">Identificador da prescrição: ${data.hash}</div>
             <div class="ads">
-              <h2>💊 Encontre os melhores preços para estes medicamentos</h2>
-              <p>Farmácias conveniadas anunciam aqui.</p>
+              <h2>💊 Cuidados contínuos com a Biovetfarma</h2>
+              <p>Farmácias conveniadas anunciam aqui com condições especiais para tutores.</p>
               <div class="ads-grid">
-                <div class="ads-card"><strong>PharmaVet Plus</strong><span>WhatsApp: (11) 99999-0000</span><button>Acessar</button></div>
-                <div class="ads-card"><strong>Clínica Farma Animal</strong><span>Telefone: (21) 3333-4444</span><button>Acessar</button></div>
-                <div class="ads-card"><strong>PetSaúde Express</strong><span>WhatsApp: (31) 98888-5555</span><button>Acessar</button></div>
+                <div class="ads-card">
+                  <span class="badge">Manipulação</span>
+                  <svg viewBox="0 0 120 120" aria-hidden="true">
+                    <rect x="50" y="10" width="20" height="100" rx="10" fill="#1A7175" />
+                    <rect x="10" y="50" width="100" height="20" rx="10" fill="#3BCBD0" />
+                    <circle cx="74" cy="48" r="18" fill="#CFF9B9" />
+                    <path d="M64 34 L74 18 L84 34 Z" fill="#CFF9B9" />
+                    <circle cx="74" cy="48" r="3.6" fill="#263238" />
+                    <circle cx="66" cy="48" r="3.6" fill="#263238" />
+                    <path d="M67 56 C70 59 73 59 77 56" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+                    <circle cx="46" cy="74" r="20" fill="#9FD883" />
+                    <path d="M32 78 C32 87 39 94 48 94 C57 94 64 87 64 78 C64 69 57 62 48 62 C39 62 32 69 32 78 Z" fill="#B4C165" opacity="0.55" />
+                    <circle cx="40" cy="74" r="4" fill="#263238" />
+                    <circle cx="54" cy="74" r="4" fill="#263238" />
+                    <path d="M43 84 C47 88 51 88 55 84" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+                  </svg>
+                  <strong>Manipulação sob medida</strong>
+                  <p>Fórmulas personalizadas com rastreio digital e entrega em todo o Brasil.</p>
+                  <a href="https://biovetfarma.com.br" target="_blank" rel="noopener">Solicitar orçamento</a>
+                </div>
+                <div class="ads-card">
+                  <span class="badge">Logística</span>
+                  <svg viewBox="0 0 120 120" aria-hidden="true">
+                    <rect x="16" y="48" width="88" height="52" rx="18" fill="#1A7175" />
+                    <circle cx="38" cy="88" r="14" fill="#3BCBD0" />
+                    <circle cx="38" cy="88" r="6" fill="#0b1417" />
+                    <circle cx="82" cy="88" r="14" fill="#9FD883" />
+                    <circle cx="82" cy="88" r="6" fill="#0b1417" />
+                    <rect x="28" y="32" width="64" height="32" rx="12" fill="#CFF9B9" />
+                    <rect x="48" y="18" width="24" height="26" rx="12" fill="#B4C165" />
+                    <path d="M46 54 H74" stroke="#3BCBD0" stroke-width="4" stroke-linecap="round" />
+                  </svg>
+                  <strong>Rede Biovetfarma</strong>
+                  <p>Farmácias parceiras prontas para atender prescrições manipuladas.</p>
+                  <a href="https://biovetfarma.com.br" target="_blank" rel="noopener">Ver parceiros</a>
+                </div>
               </div>
+              <p class="footer-note">Farmácias conveniadas anunciam aqui · biovetfarma.com.br</p>
             </div>
           </div>
         </body></html>`;
